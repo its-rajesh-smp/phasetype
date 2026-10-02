@@ -2,6 +2,7 @@ import type { Result } from '@shared/types'
 import { permissionsService, selectionService } from '../services'
 import { toErrorMessage } from '../utils'
 import { hidePanel, isPanelVisible, showPanel } from '../windows'
+import { isQuickFixRunning } from './quickFix.controller'
 
 let sourceAppId: string | null = null
 let capturing = false
@@ -12,7 +13,8 @@ export async function handleHotkey(): Promise<void> {
     hidePanel()
     return
   }
-  if (capturing) return
+  // A running quick fix is using the clipboard; reading the selection now would clash with it.
+  if (capturing || isQuickFixRunning()) return
   capturing = true
 
   try {

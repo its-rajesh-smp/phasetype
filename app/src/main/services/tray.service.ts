@@ -1,4 +1,4 @@
-import { Menu, nativeImage, Tray, type NativeImage } from 'electron'
+import { Menu, nativeImage, Tray, type MenuItemConstructorOptions, type NativeImage } from 'electron'
 import { readFileSync } from 'fs'
 import { formatAccelerator } from '@shared/utils'
 import { ASSET_PATHS } from '../constants'
@@ -7,13 +7,19 @@ import { settingsStore } from './settings.store'
 
 let tray: Tray | null = null
 
-/** Rebuilds the tray menu so it reflects the current hotkey and onboarding state. */
+/** Rebuilds the tray menu so it reflects the current hotkeys and onboarding state. */
 function refresh(): void {
   if (!tray) return
-  const { onboarded, hotkey } = settingsStore.getSettings()
+  const { onboarded, hotkey, quickFixHotkey } = settingsStore.getSettings()
+  const hints: MenuItemConstructorOptions[] = onboarded
+    ? [
+        { label: `Select text, then press ${formatAccelerator(hotkey)}`, enabled: false },
+        { label: `Quick fix in place: ${formatAccelerator(quickFixHotkey)}`, enabled: false }
+      ]
+    : [{ label: 'Setup is not finished', enabled: false }]
   tray.setContextMenu(
     Menu.buildFromTemplate([
-      { label: onboarded ? `Select text, then press ${formatAccelerator(hotkey)}` : 'Setup is not finished', enabled: false },
+      ...hints,
       { type: 'separator' },
       { label: onboarded ? 'Settings…' : 'Finish setup…', accelerator: 'Command+,', click: openMainWindow },
       { type: 'separator' },

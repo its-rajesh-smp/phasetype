@@ -1,6 +1,6 @@
 import { contextBridge, ipcRenderer, type IpcRendererEvent } from 'electron'
 import { IPC } from '@shared/constants'
-import type { AiStreamEvent, PanelContext, PhaseTypeBridge, Unsubscribe } from '@shared/types'
+import type { AiStreamEvent, PanelContext, PhaseTypeBridge, QuickFixStatus, Unsubscribe } from '@shared/types'
 
 /** Listens on an IPC channel and returns a function that removes the listener. */
 function subscribe<T>(channel: string, listener: (payload: T) => void): Unsubscribe {
@@ -37,6 +37,9 @@ const bridge: PhaseTypeBridge = {
     hide: () => ipcRenderer.send(IPC.panelHide),
     copy: (text) => ipcRenderer.invoke(IPC.panelCopy, text),
     paste: (text) => ipcRenderer.invoke(IPC.panelPaste, text)
+  },
+  status: {
+    onUpdate: (listener) => subscribe<QuickFixStatus | null>(IPC.statusUpdate, listener)
   },
   app: {
     openSettings: () => ipcRenderer.send(IPC.appOpenSettings),

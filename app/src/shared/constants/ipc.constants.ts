@@ -21,6 +21,8 @@ export const IPC = {
   panelCopy: 'panel:copy',
   panelPaste: 'panel:paste',
 
+  statusUpdate: 'status:update',
+
   appOpenSettings: 'app:open-settings',
   appCloseWindow: 'app:close-window',
   appQuit: 'app:quit',

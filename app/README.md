@@ -16,16 +16,17 @@ yarn dist:mac       # build a .dmg into dist/
 On first launch PhaseType opens a three-step setup:
 
 1. **OpenAI API key.** Checked against OpenAI, then saved encrypted with the macOS Keychain (`safeStorage`).
-2. **Hotkey.** Defaults to `⌃⌥Space`. PhaseType checks that no other app already uses it.
+2. **Hotkeys.** The panel hotkey defaults to `⌃⌥Space` and the quick fix hotkey to `⌃⌥F`. PhaseType checks that no other app already uses them.
 3. **Accessibility access.** macOS requires this before PhaseType can copy your selection and paste the result.
 
-After that, PhaseType lives in the menu bar. Everything (key, model, hotkey, system prompt, open at login) can be changed in **Settings**, which you open from the menu bar icon or the gear in the panel.
+After that, PhaseType lives in the menu bar. Everything (key, model, hotkeys, system prompt, open at login) can be changed in **Settings**, which you open from the menu bar icon or the gear in the panel.
 
 ### Using it
 
 | Action | How |
 | --- | --- |
 | Open the panel | Select text, press your hotkey (press again to close) |
+| Quick fix in place | Select text, press your quick fix hotkey (press again to cancel) |
 | Ask for anything | Type a prompt, press `↵` |
 | Fix grammar & spelling | **Fix the sentence** |
 | Refine the result | Type another prompt (it now applies to the result) |
@@ -34,6 +35,8 @@ After that, PhaseType lives in the menu bar. Everything (key, model, hotkey, sys
 | Stop / close | `esc` |
 
 If nothing is selected, the panel writes new text and pastes it at your cursor.
+
+The quick fix hotkey runs **Fix the sentence** without opening the panel: it reads the selection, fixes it and pastes it back over the selection. A small pill near the bottom of the screen shows progress, then "Fixed" or what went wrong. It never takes focus, so you stay in the app you were typing in.
 
 ## Building for Mac
 
@@ -85,8 +88,8 @@ src/
 │   └── utils/              # Accelerator formatting, model selection
 ├── main/                   # Electron main process
 │   ├── index.ts            # App lifecycle
-│   ├── windows/            # Setup/settings window, floating panel window
-│   ├── controllers/        # Hotkey → capture → panel flow, settings updates
+│   ├── windows/            # Setup/settings window, floating panel, quick fix status pill
+│   ├── controllers/        # Hotkey → capture → panel flow, quick fix flow, settings updates
 │   ├── services/           # Settings store, AI (provider registry + OpenAI),
 │   │                       # selection, clipboard, hotkey, permissions, tray
 │   ├── ipc/                # One file of IPC handlers per domain
@@ -95,7 +98,7 @@ src/
 │   ├── constants/  types/
 ├── preload/                # contextBridge → window.phasetype (typed by PhaseTypeBridge)
 └── renderer/src/
-    ├── App.tsx             # Picks the view: #/main (setup/settings) or #/panel
+    ├── App.tsx             # Picks the view: #/main (setup/settings), #/panel or #/status
     ├── styles/globals.css  # Design tokens (colors, fonts, marker, animations)
     ├── components/ui/      # Button, TextInput, Kbd, Toggle, Logo, … (one per file)
     ├── components/common/  # HotkeyRecorder, ApiKeyInput, AccessibilityStatus
@@ -107,7 +110,8 @@ src/
     └── modules/
         ├── onboarding/     # Step-by-step setup
         ├── settings/       # All settings on one page
-        └── panel/          # The hotkey panel
+        ├── panel/          # The hotkey panel
+        └── status/         # The quick fix status pill
 ```
 
 Each module has its own `components/`, `hooks/`, `constants/` and `types/` folders, and every component lives in its own file.

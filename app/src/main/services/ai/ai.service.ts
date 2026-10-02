@@ -24,6 +24,28 @@ async function verifyKey(apiKey?: string): Promise<Result<string[]>> {
   }
 }
 
+interface StreamTextInput {
+  instruction: string
+  text: string
+  signal: AbortSignal
+  onDelta: (delta: string) => void
+}
+
+/** Streams a completion from the configured provider. Throws if setup is unfinished or the request fails. */
+async function streamText({ instruction, text, signal, onDelta }: StreamTextInput): Promise<void> {
+  const apiKey = settingsStore.getApiKey()
+  const settings = settingsStore.getSettings()
+  if (!apiKey || !settings.model) throw new Error('Finish setup in Settings: an API key and model are required.')
+
+  await getProvider(settings.provider).streamCompletion({
+    apiKey,
+    model: settings.model,
+    messages: buildMessages({ systemPrompt: settings.systemPrompt, instruction, text }),
+    signal,
+    onDelta
+  })
+}
+
 /**
  * Streams an AI completion for the request, sending delta/done/error events to the renderer.
  * The request can be cancelled by id; cancellation does not emit an error.
@@ -34,22 +56,12 @@ async function run(request: AiRunRequest, sender: WebContents): Promise<void> {
     if (!sender.isDestroyed()) sender.send(IPC.aiEvent, event)
   }
   const { requestId } = request
-  const apiKey = settingsStore.getApiKey()
-  const settings = settingsStore.getSettings()
-
-  if (!apiKey || !settings.model) {
-    emit({ requestId, type: 'error', message: 'Finish setup in Settings: an API key and model are required.' })
-    return
-  }
-
   const controller = new AbortController()
   activeRequests.set(requestId, controller)
 
   try {
-    await getProvider(settings.provider).streamCompletion({
-      apiKey,
-      model: settings.model,
-      messages: buildMessages({ systemPrompt: settings.systemPrompt, ...request }),
+    await streamText({
+      ...request,
       signal: controller.signal,
       onDelta: (delta) => emit({ requestId, type: 'delta', delta })
     })
@@ -59,6 +71,13 @@ async function run(request: AiRunRequest, sender: WebContents): Promise<void> {
   } finally {
     activeRequests.delete(requestId)
   }
+}
+
+/** Runs an AI completion and resolves with the whole text. Throws on failure, including an AbortError when `signal` aborts. */
+async function complete(input: Omit<AiRunRequest, 'requestId'>, signal: AbortSignal): Promise<string> {
+  let output = ''
+  await streamText({ ...input, signal, onDelta: (delta) => (output += delta) })
+  return output
 }
 
 /** Aborts the in-flight request with this id, if any. */
@@ -73,5 +92,5 @@ function cancelAll(): void {
   activeRequests.clear()
 }
 
-/** Runs AI requests against the configured provider and streams results back to the renderer. */
-export const aiService = { verifyKey, run, cancel, cancelAll }
+/** Runs AI requests against the configured provider, streaming results to the renderer or returning them whole. */
+export const aiService = { verifyKey, run, complete, cancel, cancelAll }

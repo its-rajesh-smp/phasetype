@@ -1,4 +1,3 @@
-import { DEFAULT_HOTKEY } from '@shared/constants'
 import { useHotkeyRecorder } from '../../hooks/useHotkeyRecorder'
 import { cn } from '../../utils/cn.util'
 import { Button } from '../ui/Button'
@@ -7,6 +6,8 @@ import { KeyCombo } from '../ui/KeyCombo'
 
 interface HotkeyRecorderProps {
   value: string
+  /** Shortcut the Reset button goes back to. */
+  defaultValue: string
   onChange: (accelerator: string) => void
   error?: string | null
   size?: 'sm' | 'lg'
@@ -14,7 +15,7 @@ interface HotkeyRecorderProps {
 }
 
 /** Shows the current shortcut with Change/Reset buttons, and records a new one from the keyboard when changing. */
-export function HotkeyRecorder({ value, onChange, error, size = 'lg', disabled }: HotkeyRecorderProps): React.JSX.Element {
+export function HotkeyRecorder({ value, defaultValue, onChange, error, size = 'lg', disabled }: HotkeyRecorderProps): React.JSX.Element {
   const recorder = useHotkeyRecorder(onChange)
   const isLarge = size === 'lg'
   const message = recorder.error ?? error
@@ -42,8 +43,8 @@ export function HotkeyRecorder({ value, onChange, error, size = 'lg', disabled }
         )}
 
         <div className="flex items-center gap-1">
-          {!recorder.isRecording && value !== DEFAULT_HOTKEY && (
-            <Button variant="ghost" size="sm" disabled={disabled} onClick={() => onChange(DEFAULT_HOTKEY)}>
+          {!recorder.isRecording && value !== defaultValue && (
+            <Button variant="ghost" size="sm" disabled={disabled} onClick={() => onChange(defaultValue)}>
               Reset
             </Button>
           )}

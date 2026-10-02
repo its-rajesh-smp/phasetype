@@ -3,7 +3,10 @@ import type { AiProviderId } from './ai.types'
 export interface AppSettings {
   provider: AiProviderId
   model: string
+  /** Opens the panel. */
   hotkey: string
+  /** Fixes the selection in place, without opening the panel. */
+  quickFixHotkey: string
   systemPrompt: string
   launchAtLogin: boolean
   onboarded: boolean
@@ -16,3 +19,6 @@ export interface PublicSettings extends AppSettings {
 }
 
 export type SettingsUpdate = Partial<Omit<AppSettings, 'onboarded'>> & { apiKey?: string }
+
+/** Settings that hold a global shortcut. */
+export type HotkeySettingKey = 'hotkey' | 'quickFixHotkey'

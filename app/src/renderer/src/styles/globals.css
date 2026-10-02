@@ -25,10 +25,29 @@
 
   --animate-caret: caret 1s steps(1) infinite;
   --animate-shimmer: shimmer 1.6s linear infinite;
+  --animate-wave: wave 1s ease-in-out infinite;
+  --animate-pop-in: pop-in 180ms ease-out;
 
   @keyframes caret {
     50% {
       opacity: 0;
+    }
+  }
+  @keyframes wave {
+    0%,
+    100% {
+      opacity: 0.35;
+      transform: scale(0.8);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.25);
+    }
+  }
+  @keyframes pop-in {
+    from {
+      opacity: 0;
+      transform: translateY(6px) scale(0.96);
     }
   }
   @keyframes shimmer {

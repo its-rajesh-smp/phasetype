@@ -1,1 +1,1 @@
-export type AppView = 'main' | 'panel'
+export type AppView = 'main' | 'panel' | 'status'

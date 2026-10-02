@@ -1,12 +1,12 @@
 import { app } from 'electron'
-import { handleHotkey } from './controllers'
+import { registerHotkeys } from './controllers'
 import { ASSET_PATHS } from './constants'
 import { registerIpcHandlers } from './ipc'
 import { aiService, hotkeyService, settingsStore, trayService } from './services'
-import { createPanelWindow, openMainWindow } from './windows'
+import { createPanelWindow, createStatusWindow, openMainWindow } from './windows'
 
 /**
- * Starts the app: IPC, tray and panel. Registers the hotkey and hides the Dock icon if setup is done,
+ * Starts the app: IPC, tray, panel and status pill. Registers the hotkeys and hides the Dock icon if setup is done,
  * otherwise opens the setup window.
  */
 function bootstrap(): void {
@@ -15,9 +15,9 @@ function bootstrap(): void {
   registerIpcHandlers()
   trayService.create()
   createPanelWindow()
+  createStatusWindow()
 
-  const { onboarded, hotkey } = settingsStore.getSettings()
-  const ready = onboarded && hotkeyService.register(hotkey, handleHotkey)
+  const ready = settingsStore.getSettings().onboarded && registerHotkeys().ok
   if (ready) app.dock?.hide()
   else openMainWindow()
 }

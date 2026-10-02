@@ -1,7 +1,12 @@
 import { globalShortcut } from 'electron'
+import type { HotkeySettingKey } from '@shared/types'
 
-let currentAccelerator: string | null = null
-let currentHandler: (() => void) | null = null
+interface RegisteredHotkey {
+  accelerator: string
+  handler: () => void
+}
+
+const registered = new Map<HotkeySettingKey, RegisteredHotkey>()
 
 /** Registers a global shortcut, returning false instead of throwing if it is taken or malformed. */
 function tryRegister(accelerator: string, handler: () => void): boolean {
@@ -13,39 +18,47 @@ function tryRegister(accelerator: string, handler: () => void): boolean {
   }
 }
 
-/** Registers the hotkey, replacing the previous one. Keeps the previous one if this fails. */
-function register(accelerator: string, handler: () => void): boolean {
-  const previous = currentAccelerator
-  if (previous) globalShortcut.unregister(previous)
+/** Registers the hotkey for `key`, replacing its previous one. Keeps the previous one if this fails. */
+function register(key: HotkeySettingKey, accelerator: string, handler: () => void): boolean {
+  const previous = registered.get(key)
+  if (previous) globalShortcut.unregister(previous.accelerator)
 
   if (tryRegister(accelerator, handler)) {
-    currentAccelerator = accelerator
-    currentHandler = handler
+    registered.set(key, { accelerator, handler })
     return true
   }
-  if (previous && currentHandler) tryRegister(previous, currentHandler)
+  if (previous) tryRegister(previous.accelerator, previous.handler)
   return false
 }
 
 /** Checks whether a shortcut is free without keeping it registered. */
 function isAvailable(accelerator: string): boolean {
-  if (accelerator === currentAccelerator) return true
+  if ([...registered.values()].some((hotkey) => hotkey.accelerator === accelerator)) return true
   const ok = tryRegister(accelerator, () => undefined)
   if (ok) globalShortcut.unregister(accelerator)
   return ok
 }
 
-/** Temporarily unregisters the current hotkey (it stays remembered for `resume`). */
+/** Temporarily unregisters every hotkey (they stay remembered for `resume`). */
 function pause(): void {
-  if (currentAccelerator) globalShortcut.unregister(currentAccelerator)
+  registered.forEach(({ accelerator }) => globalShortcut.unregister(accelerator))
 }
 
-/** Re-registers the current hotkey after `pause`, if it is not already registered. */
+/** Re-registers the hotkeys after `pause`, skipping any that are already registered. */
 function resume(): void {
-  if (currentAccelerator && currentHandler && !globalShortcut.isRegistered(currentAccelerator)) {
-    tryRegister(currentAccelerator, currentHandler)
+  registered.forEach(({ accelerator, handler }) => {
+    if (!globalShortcut.isRegistered(accelerator)) tryRegister(accelerator, handler)
+  })
+}
+
+/** Manages the global hotkeys: one opens the panel, one runs the quick fix. */
+export const hotkeyService = {
+  register,
+  isAvailable,
+  pause,
+  resume,
+  unregisterAll: (): void => {
+    globalShortcut.unregisterAll()
+    registered.clear()
   }
 }
-
-/** Manages the single global hotkey that opens the panel. */
-export const hotkeyService = { register, isAvailable, pause, resume, unregisterAll: () => globalShortcut.unregisterAll() }

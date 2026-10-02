@@ -27,7 +27,13 @@ export function DoneStep(): React.JSX.Element {
         <UsageStep number={3}>Ask for a change or hit “Fix the sentence”, then Paste.</UsageStep>
       </ol>
 
-      <p className="mt-8 text-[13px] text-muted">PhaseType lives in your menu bar. Open it from there to change settings.</p>
+      <p className="mt-8 text-[15px] text-ink-soft">
+        Just need it fixed? Select the text and press
+        {settings && <KeyCombo accelerator={settings.quickFixHotkey} className="mx-1 align-middle" />}
+        instead. PhaseType fixes it in place, no panel.
+      </p>
+
+      <p className="mt-4 text-[13px] text-muted">PhaseType lives in your menu bar. Open it from there to change settings.</p>
 
       <div className="mt-auto flex justify-end pt-8">
         <Button variant="accent" size="lg" trailingIcon={<ArrowRight className="size-4" />} onClick={bridge.app.closeWindow}>

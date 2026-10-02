@@ -24,7 +24,12 @@ export function SettingsView(): React.JSX.Element {
         <div className="mt-8 flex flex-col divide-y divide-line">
           <ApiKeySetting />
           <ModelSetting />
-          <HotkeySetting />
+          <HotkeySetting settingKey="hotkey" title="Hotkey" description="Press it after selecting text in any app." />
+          <HotkeySetting
+            settingKey="quickFixHotkey"
+            title="Quick fix hotkey"
+            description="Fixes the selected text in place, without opening the panel."
+          />
           <SystemPromptSetting />
           <AccessibilitySetting />
           <LaunchAtLoginSetting />

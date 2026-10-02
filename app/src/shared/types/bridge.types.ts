@@ -2,6 +2,7 @@ import type { AiRunRequest, AiStreamEvent } from './ai.types'
 import type { PanelContext } from './panel.types'
 import type { Result } from './result.types'
 import type { PublicSettings, SettingsUpdate } from './settings.types'
+import type { QuickFixStatus } from './status.types'
 
 export type Unsubscribe = () => void
 
@@ -35,6 +36,10 @@ export interface PhaseTypeBridge {
     hide(): void
     copy(text: string): Promise<void>
     paste(text: string): Promise<Result>
+  }
+  status: {
+    /** Receives the status to show, or null once the pill is hidden. */
+    onUpdate(listener: (status: QuickFixStatus | null) => void): Unsubscribe
   }
   app: {
     openSettings(): void
