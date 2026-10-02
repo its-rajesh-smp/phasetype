@@ -1,0 +1,92 @@
+@import 'tailwindcss';
+
+/* Design tokens — the single source of truth for PhaseType's look (warm paper, ink, lime + ember accents). */
+@theme {
+  --font-sans: 'Inter Variable', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: 'Instrument Serif', ui-serif, Georgia, serif;
+
+  --color-canvas: #f4eee2;
+  --color-surface: #fbf8f2;
+  --color-sunken: #efe8da;
+  --color-ink: #16130f;
+  --color-ink-soft: #3a352d;
+  --color-muted: #6e675b;
+  --color-subtle: #a39b8c;
+  --color-line: #e5dccc;
+  --color-line-strong: #d3c8b4;
+  --color-lime: #e3f542;
+  --color-lime-deep: #d3e72b;
+  --color-ember: #cf7428;
+  --color-danger: #b4412d;
+  --color-success: #4b7a2c;
+
+  --shadow-lime: 0 12px 28px -12px rgb(198 222 32 / 0.85);
+  --shadow-card: 0 1px 0 rgb(22 19 15 / 0.04), 0 18px 40px -24px rgb(22 19 15 / 0.25);
+
+  --animate-caret: caret 1s steps(1) infinite;
+  --animate-shimmer: shimmer 1.6s linear infinite;
+
+  @keyframes caret {
+    50% {
+      opacity: 0;
+    }
+  }
+  @keyframes shimmer {
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
+  }
+}
+
+@utility drag-region {
+  -webkit-app-region: drag;
+}
+
+@utility no-drag {
+  -webkit-app-region: no-drag;
+}
+
+/* The lime → ember marker used under key words, as on alvio.io. */
+@utility marker {
+  background-image: linear-gradient(90deg, var(--color-lime) 0%, var(--color-lime-deep) 45%, var(--color-ember) 100%);
+  background-repeat: no-repeat;
+  background-size: 100% 0.5em;
+  background-position: 0 82%;
+}
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-transparent font-sans text-ink antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+    user-select: none;
+  }
+
+  input,
+  textarea,
+  [data-selectable] {
+    user-select: text;
+  }
+
+  ::selection {
+    background: var(--color-lime);
+    color: var(--color-ink);
+  }
+
+  /* Setup & settings window: warm paper with a soft lime glow. The panel window stays transparent. */
+  html[data-view='main'] body {
+    background-color: var(--color-canvas);
+    background-image:
+      repeating-linear-gradient(0deg, rgb(22 19 15 / 0.012) 0 1px, transparent 1px 3px),
+      radial-gradient(55% 45% at 85% 0%, rgb(227 245 66 / 0.45), transparent 70%),
+      radial-gradient(45% 40% at 0% 100%, rgb(232 168 112 / 0.22), transparent 70%);
+  }
+}

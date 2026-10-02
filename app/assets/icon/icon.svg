@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1024" height="1024" viewBox="0 0 1024 1024">
+  <defs>
+    <!-- Faint lime glow in the top-right corner, echoing the app's background -->
+    <radialGradient id="glow" cx="819.2" cy="153.6" r="614.4" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#e3f542" stop-opacity="0.18" />
+      <stop offset="1" stop-color="#e3f542" stop-opacity="0" />
+    </radialGradient>
+    <!-- Lime → ember along the slash -->
+    <linearGradient id="slash" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#e3f542" />
+      <stop offset="1" stop-color="#cf7428" />
+    </linearGradient>
+  </defs>
+
+  <!-- Tile on Apple's 824/1024 icon grid -->
+  <rect x="100" y="100" width="824" height="824" rx="185.4" fill="#16130f" />
+  <rect x="100" y="100" width="824" height="824" rx="185.4" fill="url(#glow)" />
+
+  <rect x="438.3" y="256" width="147.4" height="512" rx="18.4" fill="url(#slash)" transform="rotate(22 512 512)" />
+</svg>

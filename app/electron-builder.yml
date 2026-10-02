@@ -1,0 +1,26 @@
+appId: ai.phasetype.app
+productName: PhaseType
+directories:
+  buildResources: build
+  output: dist
+files:
+  - out/**/*
+  - package.json
+mac:
+  category: public.app-category.productivity
+  icon: assets/icon/icon.icns
+  # Ad-hoc signature: free, no Apple account. Replace with a "Developer ID Application" identity to distribute publicly.
+  identity: "-"
+  target:
+    - target: dmg
+      arch: [arm64, x64]
+  extendInfo:
+    LSUIElement: true
+    NSAppleEventsUsageDescription: PhaseType sends copy and paste keystrokes to the app you are writing in.
+  hardenedRuntime: true
+  entitlements: build/entitlements.mac.plist
+  entitlementsInherit: build/entitlements.mac.plist
+  notarize: false
+dmg:
+  artifactName: ${productName}-${version}-${arch}.${ext}
+  title: ${productName}
