@@ -1,0 +1,171 @@
+@import 'tailwindcss';
+
+/* Fonts come from next/font in layout.tsx, which exposes them as CSS variables. */
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
+  --font-display: var(--font-instrument-serif), ui-serif, Georgia, serif;
+}
+
+/* Design tokens, shared with the PhaseType app: warm paper, ink, lime + ember accents. */
+@theme {
+  --color-canvas: #f4eee2;
+  --color-surface: #fbf8f2;
+  --color-sunken: #efe8da;
+  --color-ink: #16130f;
+  --color-ink-soft: #3a352d;
+  --color-muted: #6e675b;
+  --color-subtle: #a39b8c;
+  --color-line: #e5dccc;
+  --color-line-strong: #d3c8b4;
+  --color-lime: #e3f542;
+  --color-lime-deep: #d3e72b;
+  --color-ember: #cf7428;
+  --color-danger: #b4412d;
+  --color-success: #4b7a2c;
+
+  --shadow-lime: 0 12px 28px -12px rgb(198 222 32 / 0.85);
+  --shadow-card: 0 1px 0 rgb(22 19 15 / 0.04), 0 18px 40px -24px rgb(22 19 15 / 0.25);
+  --shadow-window: 0 1px 0 rgb(22 19 15 / 0.05), 0 40px 80px -36px rgb(22 19 15 / 0.45);
+  --shadow-key: 0 2px 0 var(--color-line-strong);
+
+  --animate-caret: caret 1s steps(1) infinite;
+  --animate-shimmer: shimmer 1.6s linear infinite;
+  --animate-wave: wave 1s ease-in-out infinite;
+  --animate-pop-in: pop-in 220ms ease-out both;
+  --animate-rise: rise 700ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+  --animate-marquee: marquee 40s linear infinite;
+  --animate-flash: flash 1.4s ease-out both;
+  --animate-key-press: key-press 900ms ease-in-out both;
+
+  @keyframes caret {
+    50% {
+      opacity: 0;
+    }
+  }
+  @keyframes wave {
+    0%,
+    100% {
+      opacity: 0.35;
+      transform: scale(0.8);
+    }
+    50% {
+      opacity: 1;
+      transform: scale(1.25);
+    }
+  }
+  @keyframes pop-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px) scale(0.96);
+    }
+  }
+  @keyframes shimmer {
+    from {
+      background-position: 200% 0;
+    }
+    to {
+      background-position: -200% 0;
+    }
+  }
+  @keyframes rise {
+    from {
+      opacity: 0;
+      transform: translateY(18px);
+    }
+  }
+  @keyframes marquee {
+    to {
+      transform: translateX(-50%);
+    }
+  }
+  @keyframes flash {
+    from {
+      background-color: rgb(227 245 66 / 0.7);
+    }
+  }
+  @keyframes key-press {
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+    40%,
+    70% {
+      transform: translateY(2px);
+      box-shadow: 0 0 0 var(--color-line-strong);
+    }
+  }
+}
+
+/* The lime → ember marker drawn under key words. */
+@utility marker {
+  background-image: linear-gradient(90deg, var(--color-lime) 0%, var(--color-lime-deep) 45%, var(--color-ember) 100%);
+  background-repeat: no-repeat;
+  background-size: 100% 0.42em;
+  background-position: 0 86%;
+}
+
+/* Warm paper: fine grain plus soft lime and ember glows. */
+@utility paper {
+  background-color: var(--color-canvas);
+  background-image:
+    repeating-linear-gradient(0deg, rgb(22 19 15 / 0.012) 0 1px, transparent 1px 3px),
+    radial-gradient(55% 45% at 85% 0%, rgb(227 245 66 / 0.45), transparent 70%),
+    radial-gradient(45% 40% at 0% 100%, rgb(232 168 112 / 0.22), transparent 70%);
+}
+
+/* Faint grid used behind the hero demo. */
+@utility grid-lines {
+  background-image:
+    linear-gradient(to right, rgb(22 19 15 / 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(22 19 15 / 0.05) 1px, transparent 1px);
+  background-size: 48px 48px;
+}
+
+/* Fades the edges of the app marquee. */
+@utility fade-x {
+  mask-image: linear-gradient(90deg, transparent, black 12%, black 88%, transparent);
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 6rem;
+  }
+
+  body {
+    @apply bg-canvas font-sans text-ink antialiased;
+    font-feature-settings: 'cv11', 'ss01';
+  }
+
+  ::selection {
+    background: var(--color-lime);
+    color: var(--color-ink);
+  }
+}
+
+@layer components {
+  /* Sections fade up as they scroll into view, where the browser supports scroll-driven animations. */
+  @media (prefers-reduced-motion: no-preference) {
+    @supports (animation-timeline: view()) {
+      .reveal {
+        animation: rise linear both;
+        animation-timeline: view();
+        animation-range: entry 0% entry 40%;
+      }
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
