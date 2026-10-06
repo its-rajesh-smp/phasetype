@@ -20,7 +20,7 @@ export function PanelView(): React.JSX.Element {
     <PanelShell ref={shellRef}>
       <PanelHeader />
       {!panel.context.accessibilityGranted && <AccessibilityNotice />}
-      <SelectedTextPreview text={panel.context.selectedText} />
+      <SelectedTextPreview text={panel.context.selectedText} capturing={panel.context.capturing} />
       <PromptBar
         value={panel.prompt}
         placeholder={panel.placeholder}
@@ -30,7 +30,7 @@ export function PanelView(): React.JSX.Element {
         onSubmit={() => panel.run(panel.prompt)}
         onStop={panel.stop}
       />
-      <QuickActions hasText={Boolean(panel.workingText.trim())} disabled={panel.isStreaming} onRun={panel.run} />
+      <QuickActions hasText={Boolean(panel.workingText.trim())} disabled={panel.isStreaming || panel.context.capturing} onRun={panel.run} />
       <ResultView
         status={panel.stream.status}
         output={panel.stream.output}

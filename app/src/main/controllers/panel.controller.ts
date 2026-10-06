@@ -7,7 +7,10 @@ import { isQuickFixRunning } from './quickFix.controller'
 let sourceAppId: string | null = null
 let capturing = false
 
-/** Hotkey pressed: read the selection in the frontmost app, then open the panel. Pressing it again closes the panel. */
+/**
+ * Hotkey pressed: opens the panel straight away, reads the selection in the frontmost app, then focuses the panel.
+ * Pressing it again closes the panel.
+ */
 export async function handleHotkey(): Promise<void> {
   if (isPanelVisible()) {
     hidePanel()
@@ -19,11 +22,19 @@ export async function handleHotkey(): Promise<void> {
 
   try {
     const accessibilityGranted = permissionsService.isAccessibilityGranted()
-    const selection = accessibilityGranted
-      ? await selectionService.captureSelection()
-      : { text: '', sourceAppId: null }
+    if (!accessibilityGranted) {
+      sourceAppId = null
+      showPanel({ selectedText: '', accessibilityGranted, capturing: false })
+      return
+    }
+
+    // Show it unfocused first, so the ⌘C sent while reading the selection still reaches the other app.
+    showPanel({ selectedText: '', accessibilityGranted, capturing: true }, { focus: false })
+    const selection = await selectionService.captureSelection()
     sourceAppId = selection.sourceAppId
-    showPanel({ selectedText: selection.text, accessibilityGranted })
+    // The hotkey was pressed again while reading the selection, closing the panel.
+    if (!isPanelVisible()) return
+    showPanel({ selectedText: selection.text, accessibilityGranted, capturing: false })
   } finally {
     capturing = false
   }

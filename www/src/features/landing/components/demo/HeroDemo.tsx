@@ -16,11 +16,11 @@ export function HeroDemo() {
     <figure className="flex flex-col gap-6">
       <div
         aria-hidden
-        className="relative min-h-[620px] overflow-hidden rounded-[28px] border border-line-strong/70 bg-sunken/70 shadow-card sm:min-h-[560px]"
+        className="relative min-h-[620px] overflow-hidden rounded-[28px] border border-stage-line bg-stage shadow-window sm:min-h-[560px]"
       >
         <div className="absolute inset-0 grid-lines" />
-        <div className="absolute -top-24 -right-24 size-96 rounded-full bg-lime/40 blur-3xl" />
-        <div className="absolute -bottom-32 -left-20 size-96 rounded-full bg-ember/20 blur-3xl" />
+        <div className="absolute -top-32 -right-24 size-96 rounded-full bg-lime/15 blur-3xl" />
+        <div className="absolute -bottom-32 -left-20 size-96 rounded-full bg-sky-ink/20 blur-3xl" />
 
         <div className="relative">
           <DemoMenuBar app={DEMO_EMAIL.app} />

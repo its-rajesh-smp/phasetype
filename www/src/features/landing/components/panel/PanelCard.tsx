@@ -7,7 +7,7 @@ export function PanelCard({ children, className }: { children: React.ReactNode; 
   return (
     <div
       className={cn(
-        'flex flex-col overflow-hidden rounded-[18px] border border-line-strong/80 bg-surface bg-[radial-gradient(60%_80%_at_100%_0%,rgb(227_245_66/0.22),transparent_70%)] shadow-window',
+        'flex flex-col overflow-hidden rounded-[18px] border border-line-strong/80 bg-surface bg-[radial-gradient(60%_80%_at_100%_0%,rgb(190_242_100/0.25),transparent_70%)] shadow-window',
         className
       )}
     >

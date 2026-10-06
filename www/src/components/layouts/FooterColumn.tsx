@@ -4,11 +4,11 @@ import type { FooterLinkGroup } from '@/types/navigation.types'
 export function FooterColumn({ group }: { group: FooterLinkGroup }) {
   return (
     <div className="flex flex-col gap-4">
-      <p className="text-[11px] font-semibold tracking-[0.2em] text-canvas/50 uppercase">{group.title}</p>
+      <p className="text-sm font-semibold text-ink">{group.title}</p>
       <ul className="flex flex-col gap-2.5">
         {group.links.map((link) => (
           <li key={link.href}>
-            <a href={link.href} className="text-sm text-canvas/80 transition-colors hover:text-lime">
+            <a href={link.href} className="text-sm text-muted transition-colors hover:text-ink">
               {link.label}
             </a>
           </li>

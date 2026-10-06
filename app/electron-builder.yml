@@ -24,3 +24,17 @@ mac:
 dmg:
   artifactName: ${productName}-${version}-${arch}.${ext}
   title: ${productName}
+  # Drawn by scripts/dmg-background.py (background@2x.png is picked up for Retina). Keep the sizes and positions in sync with it.
+  background: build/background.png
+  iconSize: 96
+  iconTextSize: 13
+  window:
+    width: 600
+    height: 400
+  contents:
+    - x: 170
+      y: 220
+    - x: 430
+      y: 220
+      type: link
+      path: /Applications

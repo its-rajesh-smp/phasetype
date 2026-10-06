@@ -1,6 +1,6 @@
 import { cn } from '@/utils/cn.util'
 
-/** Highlights words with the lime → ember marker stroke. */
+/** Highlights words with a lime background. */
 export function Marker({ children, className }: { children: React.ReactNode; className?: string }) {
-  return <span className={cn('marker box-decoration-clone px-1', className)}>{children}</span>
+  return <span className={cn('marker', className)}>{children}</span>
 }

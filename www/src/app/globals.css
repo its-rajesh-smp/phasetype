@@ -3,29 +3,49 @@
 /* Fonts come from next/font in layout.tsx, which exposes them as CSS variables. */
 @theme inline {
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, -apple-system, sans-serif;
-  --font-display: var(--font-instrument-serif), ui-serif, Georgia, serif;
+  --font-mono: ui-monospace, 'SF Mono', SFMono-Regular, Menlo, monospace;
 }
 
-/* Design tokens, shared with the PhaseType app: warm paper, ink, lime + ember accents. */
+/* Design tokens: clean white and neutral surfaces, ink text, one lime accent and soft pastel tints. */
 @theme {
-  --color-canvas: #f4eee2;
-  --color-surface: #fbf8f2;
-  --color-sunken: #efe8da;
-  --color-ink: #16130f;
-  --color-ink-soft: #3a352d;
-  --color-muted: #6e675b;
-  --color-subtle: #a39b8c;
-  --color-line: #e5dccc;
-  --color-line-strong: #d3c8b4;
-  --color-lime: #e3f542;
-  --color-lime-deep: #d3e72b;
-  --color-ember: #cf7428;
-  --color-danger: #b4412d;
-  --color-success: #4b7a2c;
+  --color-canvas: #fafafa;
+  --color-surface: #ffffff;
+  --color-sunken: #f4f4f5;
+  --color-ink: #0a0a0a;
+  --color-ink-soft: #262626;
+  --color-muted: #525252;
+  --color-subtle: #a3a3a3;
+  --color-line: #e5e5e5;
+  --color-line-strong: #d4d4d4;
+  --color-lime: #bef264;
+  --color-lime-deep: #a3e635;
+  --color-lime-edge: #84cc16;
+  --color-ember: #ea7a1f;
+  --color-danger: #dc2626;
+  --color-success: #16a34a;
 
-  --shadow-lime: 0 12px 28px -12px rgb(198 222 32 / 0.85);
-  --shadow-card: 0 1px 0 rgb(22 19 15 / 0.04), 0 18px 40px -24px rgb(22 19 15 / 0.25);
-  --shadow-window: 0 1px 0 rgb(22 19 15 / 0.05), 0 40px 80px -36px rgb(22 19 15 / 0.45);
+  /* Dark stage behind the product demo. */
+  --color-stage: #171717;
+  --color-stage-line: #2a2a2a;
+
+  /* Pastel card tints and the matching title colours. */
+  --color-violet-tint: #f6f1ff;
+  --color-violet-edge: #e6dbff;
+  --color-violet-ink: #7c3aed;
+  --color-sky-tint: #eef6fd;
+  --color-sky-edge: #d4e8f8;
+  --color-sky-ink: #0284c7;
+  --color-peach-tint: #fdf4e9;
+  --color-peach-edge: #f6e0c6;
+  --color-peach-ink: #c2410c;
+  --color-mint-tint: #effbf1;
+  --color-mint-edge: #cdeed4;
+  --color-mint-ink: #15803d;
+
+  --shadow-lime: 0 10px 24px -12px rgb(132 204 22 / 0.7);
+  --shadow-card: 0 1px 2px rgb(10 10 10 / 0.04), 0 12px 32px -20px rgb(10 10 10 / 0.18);
+  --shadow-float: 0 8px 30px -12px rgb(10 10 10 / 0.18);
+  --shadow-window: 0 1px 0 rgb(10 10 10 / 0.04), 0 30px 70px -30px rgb(0 0 0 / 0.6);
   --shadow-key: 0 2px 0 var(--color-line-strong);
 
   --animate-caret: caret 1s steps(1) infinite;
@@ -80,7 +100,7 @@
   }
   @keyframes flash {
     from {
-      background-color: rgb(227 245 66 / 0.7);
+      background-color: rgb(190 242 100 / 0.8);
     }
   }
   @keyframes key-press {
@@ -96,28 +116,19 @@
   }
 }
 
-/* The lime → ember marker drawn under key words. */
+/* Lime highlighter stroke across the lower half of key words. */
 @utility marker {
-  background-image: linear-gradient(90deg, var(--color-lime) 0%, var(--color-lime-deep) 45%, var(--color-ember) 100%);
-  background-repeat: no-repeat;
-  background-size: 100% 0.42em;
-  background-position: 0 86%;
+  background-image: linear-gradient(to bottom, transparent 52%, var(--color-lime) 52%, var(--color-lime) 90%, transparent 90%);
+  padding-inline: 0.06em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
 }
 
-/* Warm paper: fine grain plus soft lime and ember glows. */
-@utility paper {
-  background-color: var(--color-canvas);
-  background-image:
-    repeating-linear-gradient(0deg, rgb(22 19 15 / 0.012) 0 1px, transparent 1px 3px),
-    radial-gradient(55% 45% at 85% 0%, rgb(227 245 66 / 0.45), transparent 70%),
-    radial-gradient(45% 40% at 0% 100%, rgb(232 168 112 / 0.22), transparent 70%);
-}
-
-/* Faint grid used behind the hero demo. */
+/* Faint grid on the dark demo stage. */
 @utility grid-lines {
   background-image:
-    linear-gradient(to right, rgb(22 19 15 / 0.05) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(22 19 15 / 0.05) 1px, transparent 1px);
+    linear-gradient(to right, rgb(255 255 255 / 0.035) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(255 255 255 / 0.035) 1px, transparent 1px);
   background-size: 48px 48px;
 }
 

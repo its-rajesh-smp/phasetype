@@ -37,7 +37,7 @@ export function usePanel() {
       : PROMPT_PLACEHOLDERS.withoutSelection
 
   const run = (instruction: string): void => {
-    if (!instruction.trim() || isStreaming) return
+    if (!instruction.trim() || isStreaming || context.capturing) return
     const input = { instruction: instruction.trim(), text: workingText }
     setActionError(null)
     setLastRun(input)

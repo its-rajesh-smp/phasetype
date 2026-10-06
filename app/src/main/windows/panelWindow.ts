@@ -49,11 +49,18 @@ function positionOnActiveDisplay(window: BrowserWindow): void {
   window.setPosition(x, y)
 }
 
-/** Positions the panel on the active display, sends it the selection context, then shows and focuses it. */
-export function showPanel(context: PanelContext): void {
+/**
+ * Sends the panel the selection context and shows it, positioned on the active display if it was hidden.
+ * Without `focus` it shows on top but the other app keeps keyboard focus.
+ */
+export function showPanel(context: PanelContext, { focus = true }: { focus?: boolean } = {}): void {
   if (!panel || panel.isDestroyed()) return
-  positionOnActiveDisplay(panel)
+  if (!panel.isVisible()) positionOnActiveDisplay(panel)
   panel.webContents.send(IPC.panelOpen, context)
+  if (!focus) {
+    panel.showInactive()
+    return
+  }
   panel.show()
   panel.focus()
   app.focus({ steal: true })

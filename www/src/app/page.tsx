@@ -1,4 +1,3 @@
-import { AnnouncementBar } from '@/components/layouts/AnnouncementBar'
 import { SiteFooter } from '@/components/layouts/SiteFooter'
 import { SiteHeader } from '@/components/layouts/SiteHeader'
 import { JsonLd } from '@/components/seo/JsonLd'
@@ -6,6 +5,7 @@ import { AppsMarquee } from '@/features/landing/components/sections/AppsMarquee'
 import { DownloadSection } from '@/features/landing/components/sections/DownloadSection'
 import { ExamplesSection } from '@/features/landing/components/sections/ExamplesSection'
 import { FaqSection } from '@/features/landing/components/sections/FaqSection'
+import { HeroLandscape } from '@/features/landing/components/ui/HeroLandscape'
 import { FeaturesSection } from '@/features/landing/components/sections/FeaturesSection'
 import { HeroSection } from '@/features/landing/components/sections/HeroSection'
 import { HowItWorksSection } from '@/features/landing/components/sections/HowItWorksSection'
@@ -23,10 +23,10 @@ export default function HomePage() {
       >
         Skip to content
       </a>
-      <div id="top" className="paper">
-        <AnnouncementBar />
+      <div id="top" className="relative flow-root">
+        <HeroLandscape className="absolute inset-x-0 top-0 h-[600px] md:h-[calc(500px_+_19vw)]" />
         <SiteHeader />
-        <main id="main">
+        <main id="main" className="relative">
           <HeroSection />
           <AppsMarquee />
           <HowItWorksSection />

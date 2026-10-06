@@ -1,21 +1,26 @@
 import { CLIPBOARD_POLL_INTERVAL_MS, CLIPBOARD_RESTORE_DELAY_MS, COPY_TIMEOUT_MS } from '../constants'
-import { buildCopySelectionScript, buildPasteScript } from '../helpers'
+import { COPY_SELECTION_SCRIPT, PASTE_SCRIPT } from '../helpers'
 import type { CapturedSelection } from '../types'
-import { pollUntil, runAppleScript, sleep } from '../utils'
+import { pollUntil, runJxa, sleep } from '../utils'
 import { clipboardService } from './clipboard.service'
 
 /**
- * Reads the selected text in the frontmost app by sending it ⌘C, then puts the
- * user's clipboard back the way it was.
+ * The clipboard restore from the last capture. Captures don't wait for it (writing back a large image can be slow),
+ * so the next clipboard use waits for it instead.
+ */
+let pendingRestore: Promise<void> = Promise.resolve()
+
+/**
+ * Reads the selected text in the frontmost app by sending it ⌘C. The user's clipboard is put back
+ * in the background, after this resolves.
  */
 async function captureSelection(): Promise<CapturedSelection> {
+  await pendingRestore
   const original = await clipboardService.snapshot()
   clipboardService.clear()
 
   try {
-    const [sourceAppId = null, status] = (await runAppleScript(buildCopySelectionScript())).split('\n')
-    if (status !== 'ok') return { text: '', sourceAppId }
-
+    const sourceAppId = (await runJxa(COPY_SELECTION_SCRIPT)) || null
     const text = await pollUntil(async () => (await clipboardService.readText()) || null, {
       timeoutMs: COPY_TIMEOUT_MS,
       intervalMs: CLIPBOARD_POLL_INTERVAL_MS
@@ -25,16 +30,17 @@ async function captureSelection(): Promise<CapturedSelection> {
     console.error('[selection] Could not read the selection.', error)
     return { text: '', sourceAppId: null }
   } finally {
-    await clipboardService.restore(original)
+    pendingRestore = clipboardService.restore(original)
   }
 }
 
 /** Pastes `text` into the source app, replacing the selection if there still is one. */
 async function pasteText(text: string, sourceAppId: string | null): Promise<void> {
+  await pendingRestore
   const original = await clipboardService.snapshot()
   await clipboardService.writeText(text)
   try {
-    await runAppleScript(buildPasteScript(sourceAppId))
+    await runJxa(PASTE_SCRIPT, [sourceAppId ?? ''])
     await sleep(CLIPBOARD_RESTORE_DELAY_MS)
   } finally {
     await clipboardService.restore(original)

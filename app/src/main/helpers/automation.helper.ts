@@ -1,40 +1,52 @@
 /**
- * Waits (up to ~1s) for the hotkey's modifiers to be released so the synthetic ⌘C/⌘V isn't merged
- * with held keys (e.g. ⌘⌥C). Checks bits 17–20 of NSEvent.modifierFlags (Shift, Control, Option, Command).
+ * JXA scripts that send ⌘C/⌘V to other apps. They post keyboard events through CoreGraphics and read the
+ * frontmost app from NSWorkspace, which starts in ~50ms. AppleScript with System Events took ~270ms.
  */
-const WAIT_FOR_MODIFIER_RELEASE = `
-set attempts to 0
-repeat while ((current application's NSEvent's modifierFlags()) as integer) div 131072 mod 16 > 0 and attempts < 50
-  delay 0.02
-  set attempts to attempts + 1
-end repeat`
+const PRELUDE = `
+ObjC.import('AppKit');
+ObjC.import('CoreGraphics');
 
-const SCRIPT_HEADER = `use framework "AppKit"
-use scripting additions`
+const HID_STATE = 1; // kCGEventSourceStateHIDSystemState
+const MODIFIER_MASK = 0x1e0000; // Shift, Control, Option, Command
+const KEY_C = 8;
+const KEY_V = 9;
 
-/** Returns "<frontmost bundle id>\n<ok|failed>" after sending ⌘C to the frontmost app. */
-export const buildCopySelectionScript = (): string => `${SCRIPT_HEADER}
-tell application "System Events" to set frontApp to bundle identifier of first application process whose frontmost is true
-${WAIT_FOR_MODIFIER_RELEASE}
-set copyStatus to "ok"
-try
-  tell application "System Events" to keystroke "c" using command down
-on error
-  set copyStatus to "failed"
-end try
-return frontApp & linefeed & copyStatus`
-
-const SAFE_BUNDLE_ID = /^[\w.-]+$/
-
-/** Brings the source app back to the front and sends ⌘V. */
-export const buildPasteScript = (sourceAppId: string | null): string => {
-  const activate =
-    sourceAppId && SAFE_BUNDLE_ID.test(sourceAppId)
-      ? `tell application id "${sourceAppId}" to activate
-delay 0.15`
-      : ''
-  return `${SCRIPT_HEADER}
-${activate}
-${WAIT_FOR_MODIFIER_RELEASE}
-tell application "System Events" to keystroke "v" using command down`
+function frontmostAppId() {
+  const app = $.NSWorkspace.sharedWorkspace.frontmostApplication;
+  return app.isNil() ? '' : ObjC.unwrap(app.bundleIdentifier) || '';
 }
+
+// Waits (up to ~1s) for the hotkey's modifiers to be released, so ⌘C isn't merged with held keys (e.g. ⌘⌥C).
+function waitForModifierRelease() {
+  for (let i = 0; i < 50 && ($.CGEventSourceFlagsState(HID_STATE) & MODIFIER_MASK) !== 0; i++) delay(0.02);
+}
+
+function pressWithCommand(keyCode) {
+  for (const keyDown of [true, false]) {
+    const event = $.CGEventCreateKeyboardEvent($(), keyCode, keyDown);
+    $.CGEventSetFlags(event, $.kCGEventFlagMaskCommand);
+    $.CGEventPost($.kCGHIDEventTap, event);
+  }
+}
+`
+
+/** Sends ⌘C to the frontmost app and returns its bundle id. */
+export const COPY_SELECTION_SCRIPT = `${PRELUDE}
+function run() {
+  const appId = frontmostAppId();
+  waitForModifierRelease();
+  pressWithCommand(KEY_C);
+  return appId;
+}`
+
+/** Takes the source app's bundle id as its argument, brings that app to the front if needed, and sends ⌘V. */
+export const PASTE_SCRIPT = `${PRELUDE}
+function run(argv) {
+  const sourceAppId = argv[0];
+  if (sourceAppId && frontmostAppId() !== sourceAppId) {
+    Application(sourceAppId).activate();
+    delay(0.15);
+  }
+  waitForModifierRelease();
+  pressWithCommand(KEY_V);
+}`

@@ -1,7 +1,7 @@
 import type { AppSettings, HotkeySettingKey } from '../types'
 
-export const DEFAULT_HOTKEY = 'Control+Alt+Space'
-export const DEFAULT_QUICK_FIX_HOTKEY = 'Control+Alt+F'
+export const DEFAULT_HOTKEY = 'Command+Shift+Space'
+export const DEFAULT_QUICK_FIX_HOTKEY = 'Alt+Shift+Space'
 
 export const DEFAULT_HOTKEYS: Record<HotkeySettingKey, string> = {
   hotkey: DEFAULT_HOTKEY,

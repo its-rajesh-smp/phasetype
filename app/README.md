@@ -16,7 +16,7 @@ yarn dist:mac       # build a .dmg into dist/
 On first launch PhaseType opens a three-step setup:
 
 1. **OpenAI API key.** Checked against OpenAI, then saved encrypted with the macOS Keychain (`safeStorage`).
-2. **Hotkeys.** The panel hotkey defaults to `⌃⌥Space` and the quick fix hotkey to `⌃⌥F`. PhaseType checks that no other app already uses them.
+2. **Hotkeys.** The panel hotkey defaults to `⌘⇧Space` and the quick fix hotkey to `⌥⇧Space`. PhaseType checks that no other app already uses them.
 3. **Accessibility access.** macOS requires this before PhaseType can copy your selection and paste the result.
 
 After that, PhaseType lives in the menu bar. Everything (key, model, hotkeys, system prompt, open at login) can be changed in **Settings**, which you open from the menu bar icon or the gear in the panel.
@@ -65,9 +65,9 @@ To distribute it publicly without warnings, join the Apple Developer Program ($9
 
 ## How it works
 
-- **Reading the selection:** when you press the hotkey, the main process remembers which app is in front, sends it `⌘C` through AppleScript (`osascript`), reads the clipboard, then puts your original clipboard back. No native modules are needed.
+- **Reading the selection:** when you press the hotkey, the panel appears straight away without taking focus. The main process remembers which app is in front, sends it `⌘C`, reads the clipboard, then focuses the panel. Your original clipboard is put back in the background. No native modules are needed.
 - **Paste:** the panel hides, PhaseType switches back to that app and sends `⌘V`, then restores your clipboard.
-- The AppleScript waits until you release the hotkey's modifier keys, so the `⌘C` isn't merged with keys you're still holding (e.g. sent as `⌘⌥C`).
+- `⌘C`/`⌘V` are sent by a small JXA script (`osascript -l JavaScript`) that posts CoreGraphics key events. It starts in about 50 ms (AppleScript with System Events took about 270 ms). It waits until you release the hotkey's modifier keys, so the `⌘C` isn't merged with keys you're still holding (e.g. sent as `⌘⌥C`).
 - **The API key** never reaches the UI. Only the main process decrypts it, and the renderer only sees a hint like `sk-proj…abcd`.
 - Responses **stream** from OpenAI's Chat Completions API over IPC. PhaseType lists the chat models available to your key and picks a fast default (`gpt-4.1-mini` → `gpt-4o-mini` → …).
 
@@ -93,8 +93,8 @@ src/
 │   ├── services/           # Settings store, AI (provider registry + OpenAI),
 │   │                       # selection, clipboard, hotkey, permissions, tray
 │   ├── ipc/                # One file of IPC handlers per domain
-│   ├── helpers/            # AppleScript builders, prompt builder, key hint
-│   ├── utils/              # osascript runner, polling, sleep, errors
+│   ├── helpers/            # ⌘C/⌘V scripts, prompt builder, key hint
+│   ├── utils/              # osascript (JXA) runner, polling, sleep, errors
 │   ├── constants/  types/
 ├── preload/                # contextBridge → window.phasetype (typed by PhaseTypeBridge)
 └── renderer/src/

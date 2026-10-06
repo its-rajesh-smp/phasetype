@@ -1,26 +1,30 @@
 import { Container } from '@/components/ui/Container'
 import { SectionHeading } from '@/components/ui/SectionHeading'
-import { FEATURES } from '../../constants/features.constants'
+import { ACTIVITY_ITEMS, FEATURES, HOTKEY_ITEMS } from '../../constants/features.constants'
+import type { FeatureVisualId } from '../../types/landing.types'
+import { ActivityFeed } from '../ui/ActivityFeed'
 import { FeatureCard } from '../ui/FeatureCard'
+import { HotkeyList } from '../ui/HotkeyList'
 
-/** Bento grid of features. The first tile is highlighted in lime. */
+const FEATURE_VISUALS: Record<FeatureVisualId, React.ReactNode> = {
+  activity: <ActivityFeed items={ACTIVITY_ITEMS} />,
+  hotkeys: <HotkeyList items={HOTKEY_ITEMS} />
+}
+
+/** Pastel bento grid of features. */
 export function FeaturesSection() {
   return (
-    <section id="features" aria-labelledby="features-title" className="py-24 sm:py-32">
+    <section id="features" aria-labelledby="features-title" className="pb-24 sm:pb-32">
       <Container className="reveal flex flex-col gap-14">
         <SectionHeading
           id="features-title"
-          eyebrow="Features"
-          title={
-            <>
-              Small app. <em>Sweats the details.</em>
-            </>
-          }
-          description="Everything is built around one idea: you should never have to leave the thing you are writing."
+          badge="Features"
+          title="Everything for writing, nothing in the way"
+          description="Built around one idea: you should never have to leave the thing you are writing."
         />
         <ul className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {FEATURES.map((feature, index) => (
-            <FeatureCard key={feature.title} feature={feature} highlighted={index === 0} />
+          {FEATURES.map((feature) => (
+            <FeatureCard key={feature.title} feature={feature} visual={feature.visual && FEATURE_VISUALS[feature.visual]} />
           ))}
         </ul>
       </Container>

@@ -1,19 +1,11 @@
 import type { Metadata, Viewport } from 'next'
-import { Inter, Instrument_Serif } from 'next/font/google'
+import { Inter } from 'next/font/google'
 import { SITE } from '@/constants/site.constants'
 import './globals.css'
 
 const inter = Inter({
   variable: '--font-inter',
   subsets: ['latin'],
-  display: 'swap'
-})
-
-const instrumentSerif = Instrument_Serif({
-  variable: '--font-instrument-serif',
-  subsets: ['latin'],
-  weight: '400',
-  style: ['normal', 'italic'],
   display: 'swap'
 })
 
@@ -71,7 +63,7 @@ export const viewport: Viewport = {
 
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
-    <html lang="en" className={`${inter.variable} ${instrumentSerif.variable}`}>
+    <html lang="en" className={inter.variable}>
       <body>{children}</body>
     </html>
   )

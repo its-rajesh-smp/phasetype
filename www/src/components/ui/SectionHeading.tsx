@@ -1,47 +1,26 @@
 import { cn } from '@/utils/cn.util'
-import { Eyebrow } from './Eyebrow'
+import { PillBadge } from './PillBadge'
 
 interface SectionHeadingProps {
   id: string
-  eyebrow: string
+  badge: string
   title: React.ReactNode
   description?: React.ReactNode
   align?: 'left' | 'center'
-  tone?: 'ink' | 'paper'
   className?: string
 }
 
-/** Eyebrow, serif h2 and supporting copy at the top of a section. `id` labels the section. */
-export function SectionHeading({
-  id,
-  eyebrow,
-  title,
-  description,
-  align = 'left',
-  tone = 'ink',
-  className
-}: SectionHeadingProps) {
+/** Pill badge, h2 and supporting copy at the top of a section. `id` labels the section. */
+export function SectionHeading({ id, badge, title, description, align = 'center', className }: SectionHeadingProps) {
   const isCentered = align === 'center'
 
   return (
-    <div className={cn('flex max-w-2xl flex-col gap-5', isCentered && 'mx-auto items-center text-center', className)}>
-      <Eyebrow withRule={!isCentered} className={cn(tone === 'paper' && 'text-canvas/60')}>
-        {eyebrow}
-      </Eyebrow>
-      <h2
-        id={id}
-        className={cn(
-          'font-display text-[44px] leading-[0.95] tracking-[-0.015em] text-balance sm:text-6xl',
-          tone === 'ink' ? 'text-ink' : 'text-canvas'
-        )}
-      >
+    <div className={cn('flex max-w-2xl flex-col gap-5', isCentered ? 'mx-auto items-center text-center' : 'items-start', className)}>
+      <PillBadge>{badge}</PillBadge>
+      <h2 id={id} className="text-4xl leading-[1.1] font-medium tracking-[-0.025em] text-balance text-ink sm:text-5xl">
         {title}
       </h2>
-      {description && (
-        <p className={cn('text-[17px] leading-relaxed text-pretty', tone === 'ink' ? 'text-muted' : 'text-canvas/70')}>
-          {description}
-        </p>
-      )}
+      {description && <p className="text-lg leading-relaxed text-pretty text-muted sm:text-xl">{description}</p>}
     </div>
   )
 }

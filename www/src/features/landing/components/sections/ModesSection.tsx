@@ -14,17 +14,13 @@ export function ModesSection() {
       <Container className="reveal flex flex-col gap-14">
         <SectionHeading
           id="modes-title"
-          eyebrow="Two hotkeys"
-          title={
-            <>
-              One to ask. <em className="text-ember">One to fix.</em>
-            </>
-          }
+          badge="Two hotkeys"
+          title="One to ask. One to fix."
           description="Open the panel when you want to steer the rewrite. Use quick fix when you just want it right, without leaving the line you are on."
         />
         <div className="grid gap-5 lg:grid-cols-2">
           <ModeCard mode={PANEL_MODE} visual={<PanelVisual />} />
-          <ModeCard mode={QUICK_FIX_MODE} visual={<QuickFixVisual />} tone="ink" />
+          <ModeCard mode={QUICK_FIX_MODE} visual={<QuickFixVisual />} tone="dark" />
         </div>
       </Container>
     </section>

@@ -22,6 +22,6 @@ export const SITE = {
   version: '0.1.0',
   locale: 'en_US',
   category: 'productivity',
-  themeColor: '#16130f',
-  backgroundColor: '#f4eee2'
+  themeColor: '#0a0a0a',
+  backgroundColor: '#fafafa'
 } as const

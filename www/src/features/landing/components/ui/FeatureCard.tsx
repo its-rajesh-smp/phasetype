@@ -1,22 +1,34 @@
 import { IconBadge } from '@/components/ui/IconBadge'
 import { cn } from '@/utils/cn.util'
+import { TONE_CLASSES } from '../../constants/tone.constants'
 import type { Feature } from '../../types/landing.types'
 
-/** A feature tile in the bento grid. Wide tiles span two columns on large screens. */
-export function FeatureCard({ feature, highlighted = false }: { feature: Feature; highlighted?: boolean }) {
+interface FeatureCardProps {
+  feature: Feature
+  visual?: React.ReactNode
+}
+
+/** A pastel tile in the features bento. Wide tiles span two columns and can show a visual. */
+export function FeatureCard({ feature, visual }: FeatureCardProps) {
+  const tone = TONE_CLASSES[feature.tone]
+
   return (
     <li
       className={cn(
-        'flex flex-col gap-5 rounded-3xl border p-6 transition-colors duration-300',
+        'flex flex-col gap-6 rounded-[28px] border p-6 sm:p-7',
+        tone.card,
         feature.wide && 'lg:col-span-2',
-        highlighted ? 'border-lime-deep bg-lime' : 'border-line bg-surface hover:border-line-strong'
+        visual && 'justify-between'
       )}
     >
-      <IconBadge icon={feature.icon} tone={highlighted ? 'ink' : 'paper'} />
-      <div className="flex flex-col gap-2">
-        <h3 className="text-lg font-semibold tracking-[-0.01em] text-ink">{feature.title}</h3>
-        <p className={cn('text-[15px] leading-relaxed', highlighted ? 'text-ink-soft' : 'text-muted')}>{feature.description}</p>
+      <div className="flex flex-col gap-4">
+        <IconBadge icon={feature.icon} />
+        <div className="flex flex-col gap-2">
+          <h3 className={cn('text-2xl leading-tight font-medium tracking-[-0.04em]', tone.title)}>{feature.title}</h3>
+          <p className="text-[15px] leading-relaxed text-muted">{feature.description}</p>
+        </div>
       </div>
+      {visual}
     </li>
   )
 }
