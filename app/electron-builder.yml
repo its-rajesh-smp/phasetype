@@ -6,6 +6,10 @@ directories:
 files:
   - out/**/*
   - package.json
+# The Accessibility helper, built by scripts/build-ax-helper.sh.
+extraResources:
+  - from: native/bin/phasetype-ax
+    to: phasetype-ax
 mac:
   category: public.app-category.productivity
   icon: assets/icon/icon.icns

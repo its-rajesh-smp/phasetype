@@ -1,3 +1,4 @@
+export { accessibilityService } from './accessibility.service'
 export { aiService } from './ai/ai.service'
 export { clipboardService } from './clipboard.service'
 export { hotkeyService } from './hotkey.service'

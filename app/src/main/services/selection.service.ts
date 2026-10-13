@@ -1,7 +1,8 @@
-import { CLIPBOARD_POLL_INTERVAL_MS, CLIPBOARD_RESTORE_DELAY_MS, COPY_TIMEOUT_MS } from '../constants'
+import { CLIPBOARD_POLL_INTERVAL_MS, CLIPBOARD_RESTORE_DELAY_MS, COPY_RETRY_TIMEOUT_MS, COPY_TIMEOUT_MS } from '../constants'
 import { COPY_SELECTION_SCRIPT, PASTE_SCRIPT } from '../helpers'
 import type { CapturedSelection } from '../types'
 import { pollUntil, runJxa, sleep } from '../utils'
+import { accessibilityService } from './accessibility.service'
 import { clipboardService } from './clipboard.service'
 
 /**
@@ -10,21 +11,30 @@ import { clipboardService } from './clipboard.service'
  */
 let pendingRestore: Promise<void> = Promise.resolve()
 
+/** Waits for copied text to show up on the (cleared) clipboard; null if none arrives in time. */
+const waitForCopiedText = (timeoutMs: number): Promise<string | null> =>
+  pollUntil(async () => (await clipboardService.readText()) || null, { timeoutMs, intervalMs: CLIPBOARD_POLL_INTERVAL_MS })
+
 /**
- * Reads the selected text in the frontmost app by sending it ⌘C. The user's clipboard is put back
- * in the background, after this resolves.
+ * Reads the selected text in the frontmost app: directly through Accessibility when the app supports it, otherwise
+ * by sending it ⌘C. After a ⌘C, the user's clipboard is put back in the background, after this resolves.
  */
 async function captureSelection(): Promise<CapturedSelection> {
+  const direct = await accessibilityService.readSelection()
+  if (direct) return direct
+
   await pendingRestore
   const original = await clipboardService.snapshot()
   clipboardService.clear()
 
   try {
     const sourceAppId = (await runJxa(COPY_SELECTION_SCRIPT)) || null
-    const text = await pollUntil(async () => (await clipboardService.readText()) || null, {
-      timeoutMs: COPY_TIMEOUT_MS,
-      intervalMs: CLIPBOARD_POLL_INTERVAL_MS
-    })
+    let text = await waitForCopiedText(COPY_TIMEOUT_MS)
+    if (text === null) {
+      // Apps sometimes drop a synthetic ⌘C (busy, or still handling the hotkey). Copying again is harmless.
+      await runJxa(COPY_SELECTION_SCRIPT)
+      text = await waitForCopiedText(COPY_RETRY_TIMEOUT_MS)
+    }
     return { text: text ?? '', sourceAppId }
   } catch (error) {
     console.error('[selection] Could not read the selection.', error)
@@ -34,8 +44,13 @@ async function captureSelection(): Promise<CapturedSelection> {
   }
 }
 
-/** Pastes `text` into the source app, replacing the selection if there still is one. */
+/**
+ * Puts `text` into the source app, replacing the selection if there still is one: directly through Accessibility when
+ * the app supports it, otherwise by pasting with ⌘V.
+ */
 async function pasteText(text: string, sourceAppId: string | null): Promise<void> {
+  if (sourceAppId && (await accessibilityService.replaceSelection(text, sourceAppId))) return
+
   await pendingRestore
   const original = await clipboardService.snapshot()
   await clipboardService.writeText(text)
@@ -47,5 +62,5 @@ async function pasteText(text: string, sourceAppId: string | null): Promise<void
   }
 }
 
-/** Reads the selected text from, and pastes text into, other apps via synthetic ⌘C/⌘V. */
+/** Reads the selected text from, and puts text into, other apps via Accessibility or synthetic ⌘C/⌘V. */
 export const selectionService = { captureSelection, pasteText }
