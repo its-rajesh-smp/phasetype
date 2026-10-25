@@ -44,12 +44,6 @@ export interface FaqEntry {
   answer: string
 }
 
-export interface PrivacyPoint {
-  icon: LucideIcon
-  title: string
-  description: string
-}
-
 export interface WritingExample {
   id: string
   label: string
