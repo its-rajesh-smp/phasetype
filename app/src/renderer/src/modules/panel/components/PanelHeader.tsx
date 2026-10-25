@@ -1,12 +1,18 @@
 import { Settings2 } from 'lucide-react'
-import { Logo } from '../../../components/ui/Logo'
+import { WindowCloseButton } from '../../../components/ui/WindowCloseButton'
+import { useWindowFocused } from '../../../hooks/useWindowFocused'
 import { bridge } from '../../../services/bridge.service'
 
-/** Draggable panel header with the logo and a button that opens the settings window. */
+/**
+ * Draggable panel header: the close button on the left, settings on the right. Close hides the panel;
+ * PhaseType keeps running in the menu bar.
+ */
 export function PanelHeader(): React.JSX.Element {
+  const focused = useWindowFocused()
+
   return (
     <div className="drag-region flex h-10 shrink-0 items-center justify-between px-4">
-      <Logo showWordmark={false} className="scale-90" />
+      <WindowCloseButton active={focused} onClick={bridge.panel.hide} />
       <button
         type="button"
         onClick={bridge.app.openSettings}

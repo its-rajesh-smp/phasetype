@@ -7,7 +7,7 @@ import { loadView, PRELOAD_PATH } from './loadView'
 
 let panel: BrowserWindow | null = null
 
-/** Creates the hidden, frameless, always-on-top panel window. It hides itself when it loses focus. */
+/** Creates the hidden, frameless, always-on-top panel window. It stays open when you click elsewhere; Esc, Copy or Paste close it. */
 export function createPanelWindow(): void {
   panel = new BrowserWindow({
     width: PANEL_WINDOW.width,
@@ -34,9 +34,6 @@ export function createPanelWindow(): void {
 
   panel.setAlwaysOnTop(true, 'floating')
   panel.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true, skipTransformProcessType: true })
-  panel.on('blur', () => {
-    if (!panel?.webContents.isDevToolsOpened()) hidePanel()
-  })
 
   loadView(panel, 'panel')
 }
@@ -79,6 +76,9 @@ export function hidePanel({ restoreFocus = true }: { restoreFocus?: boolean } = 
 
 /** True if the panel window exists and is currently shown. */
 export const isPanelVisible = (): boolean => Boolean(panel && !panel.isDestroyed() && panel.isVisible())
+
+/** True if the panel is shown and has keyboard focus (rather than sitting open behind the app you're using). */
+export const isPanelFocused = (): boolean => isPanelVisible() && Boolean(panel?.isFocused())
 
 /** Resizes the panel height to fit its content, clamped to the configured min/max height. */
 export function resizePanel(contentHeight: number): void {

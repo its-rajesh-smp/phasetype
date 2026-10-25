@@ -5,6 +5,8 @@ import { ShortcutHint } from './ShortcutHint'
 
 interface PanelFooterProps {
   canAct: boolean
+  /** False when the selection came from somewhere text can't be pasted (e.g. files in Finder). */
+  canPaste: boolean
   copied: boolean
   error: string | null
   onCopy: () => void
@@ -12,19 +14,19 @@ interface PanelFooterProps {
 }
 
 /** Panel footer with shortcut hints and Copy/Paste buttons, which are always visible but only enabled once there is a result. */
-export function PanelFooter({ canAct, copied, error, onCopy, onPaste }: PanelFooterProps): React.JSX.Element {
+export function PanelFooter({ canAct, canPaste, copied, error, onCopy, onPaste }: PanelFooterProps): React.JSX.Element {
   return (
     <div className="flex flex-col gap-2 border-t border-line bg-canvas/50 px-4 py-3">
       {error && <InlineMessage tone="error">{error}</InlineMessage>}
       <div className="flex items-center justify-between gap-3">
         <div className="flex items-center gap-3">
           <ShortcutHint accelerator="Return" label="run" />
-          <ShortcutHint accelerator="Command+Return" label="paste" />
+          {canPaste && <ShortcutHint accelerator="Command+Return" label="paste" />}
           <ShortcutHint accelerator="Escape" label="close" />
         </div>
         <div className="flex items-center gap-2">
           <Button
-            variant="secondary"
+            variant={canPaste ? 'secondary' : 'accent'}
             size="sm"
             disabled={!canAct}
             onClick={onCopy}
@@ -32,9 +34,11 @@ export function PanelFooter({ canAct, copied, error, onCopy, onPaste }: PanelFoo
           >
             {copied ? 'Copied' : 'Copy'}
           </Button>
-          <Button variant="accent" size="sm" disabled={!canAct} onClick={onPaste} leadingIcon={<ClipboardPaste className="size-3.5" />}>
-            Paste
-          </Button>
+          {canPaste && (
+            <Button variant="accent" size="sm" disabled={!canAct} onClick={onPaste} leadingIcon={<ClipboardPaste className="size-3.5" />}>
+              Paste
+            </Button>
+          )}
         </div>
       </div>
     </div>

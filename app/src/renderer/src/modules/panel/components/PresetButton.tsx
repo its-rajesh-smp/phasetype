@@ -21,7 +21,7 @@ export function PresetButton({ preset, open, disabled, onClick }: PresetButtonPr
       disabled={disabled}
       onClick={onClick}
       className={cn(
-        'inline-flex h-8 max-w-56 shrink-0 items-center gap-1.5 rounded-full border pr-1.5 pl-3 text-[13px] font-medium transition-colors',
+        'ml-auto inline-flex h-8 max-w-56 shrink-0 items-center gap-1.5 rounded-full border pr-1.5 pl-3 text-[13px] font-medium transition-colors',
         'disabled:pointer-events-none disabled:opacity-40',
         preset ? 'border-lime-deep bg-lime/35 text-ink hover:bg-lime/55' : 'border-line-strong bg-surface text-ink-soft hover:border-ink/30 hover:text-ink'
       )}

@@ -38,7 +38,7 @@ function runHelper(args: string[], input?: string): Promise<HelperOutput> {
 async function readSelection(): Promise<CapturedSelection | null> {
   const output = await runHelper(['read'])
   if (!output.ok || !output.text) return null
-  return { text: output.text, sourceAppId: output.appId ?? null }
+  return { text: output.text, files: [], sourceAppId: output.appId ?? null }
 }
 
 /**

@@ -1,5 +1,7 @@
 import { useRef } from 'react'
 import { AccessibilityNotice } from './components/AccessibilityNotice'
+import { AttachmentList } from './components/AttachmentList'
+import { ConversationView } from './components/ConversationView'
 import { PanelFooter } from './components/PanelFooter'
 import { PanelHeader } from './components/PanelHeader'
 import { PanelShell } from './components/PanelShell'
@@ -7,12 +9,11 @@ import { PresetButton } from './components/PresetButton'
 import { PresetMenu } from './components/PresetMenu'
 import { PromptBar } from './components/PromptBar'
 import { QuickActions } from './components/QuickActions'
-import { ResultView } from './components/ResultView'
 import { SelectedTextPreview } from './components/SelectedTextPreview'
 import { useAutoResize } from './hooks/useAutoResize'
 import { usePanel } from './hooks/usePanel'
 
-/** The floating panel opened by the hotkey: selected text, prompt, quick actions, preset picker, result and Copy/Paste. */
+/** The floating panel opened by the hotkey: selected text or files, the conversation so far, prompt, quick actions, preset picker and Copy/Paste. */
 export function PanelView(): React.JSX.Element {
   const shellRef = useRef<HTMLDivElement>(null)
   useAutoResize(shellRef)
@@ -22,7 +23,12 @@ export function PanelView(): React.JSX.Element {
     <PanelShell ref={shellRef}>
       <PanelHeader />
       {!panel.context.accessibilityGranted && <AccessibilityNotice />}
-      <SelectedTextPreview text={panel.context.selectedText} capturing={panel.context.capturing} />
+      {panel.hasAttachments ? (
+        <AttachmentList attachments={panel.attachments} onRemove={panel.removeAttachment} />
+      ) : (
+        <SelectedTextPreview text={panel.context.selectedText} capturing={panel.context.capturing} />
+      )}
+      <ConversationView turns={panel.turns} presets={panel.context.presets} onRegenerate={panel.regenerate} />
       <PromptBar
         value={panel.prompt}
         placeholder={panel.placeholder}
@@ -34,7 +40,9 @@ export function PanelView(): React.JSX.Element {
         onStop={panel.stop}
       />
       <div className="flex items-start justify-between gap-3 px-4 pt-3 pb-4">
-        <QuickActions hasText={Boolean(panel.workingText.trim())} disabled={panel.isStreaming || panel.context.capturing} onRun={panel.run} />
+        {!panel.hasAttachments && (
+          <QuickActions hasText={Boolean(panel.workingText.trim())} disabled={panel.isStreaming || panel.context.capturing} onRun={panel.runQuickAction} />
+        )}
         <PresetButton
           preset={panel.activePreset}
           open={panel.presetMenuOpen}
@@ -45,14 +53,9 @@ export function PanelView(): React.JSX.Element {
       {panel.presetMenuOpen && (
         <PresetMenu presets={panel.context.presets} activeId={panel.activePreset?.id ?? null} onSelect={panel.selectPreset} />
       )}
-      <ResultView
-        status={panel.stream.status}
-        output={panel.stream.output}
-        error={panel.stream.error}
-        onRegenerate={panel.regenerate}
-      />
       <PanelFooter
         canAct={panel.hasResult}
+        canPaste={panel.canPaste}
         copied={panel.copied}
         error={panel.actionError}
         onCopy={() => void panel.copy()}

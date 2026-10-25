@@ -1,5 +1,6 @@
 export { accessibilityService } from './accessibility.service'
 export { aiService } from './ai/ai.service'
+export { attachmentService } from './attachment.service'
 export { clipboardService } from './clipboard.service'
 export { hotkeyService } from './hotkey.service'
 export { loginItemService } from './loginItem.service'

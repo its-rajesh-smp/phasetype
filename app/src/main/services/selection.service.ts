@@ -11,12 +11,22 @@ import { clipboardService } from './clipboard.service'
  */
 let pendingRestore: Promise<void> = Promise.resolve()
 
-/** Waits for copied text to show up on the (cleared) clipboard; null if none arrives in time. */
-const waitForCopiedText = (timeoutMs: number): Promise<string | null> =>
-  pollUntil(async () => (await clipboardService.readText()) || null, { timeoutMs, intervalMs: CLIPBOARD_POLL_INTERVAL_MS })
+type CopiedContent = Omit<CapturedSelection, 'sourceAppId'>
+
+/** Reads what a ⌘C put on the clipboard. Files win over text, since Finder also copies the file names as text. */
+async function readCopied(): Promise<CopiedContent | null> {
+  const files = await clipboardService.readFilePaths()
+  if (files.length) return { text: '', files }
+  const text = await clipboardService.readText()
+  return text ? { text, files: [] } : null
+}
+
+/** Waits for copied text or files to show up on the (cleared) clipboard; null if nothing arrives in time. */
+const waitForCopied = (timeoutMs: number): Promise<CopiedContent | null> =>
+  pollUntil(readCopied, { timeoutMs, intervalMs: CLIPBOARD_POLL_INTERVAL_MS })
 
 /**
- * Reads the selected text in the frontmost app: directly through Accessibility when the app supports it, otherwise
+ * Reads the selected text (or files, e.g. in Finder) in the frontmost app: directly through Accessibility when the app supports it, otherwise
  * by sending it ⌘C. After a ⌘C, the user's clipboard is put back in the background, after this resolves.
  */
 async function captureSelection(): Promise<CapturedSelection> {
@@ -29,16 +39,16 @@ async function captureSelection(): Promise<CapturedSelection> {
 
   try {
     const sourceAppId = (await runJxa(COPY_SELECTION_SCRIPT)) || null
-    let text = await waitForCopiedText(COPY_TIMEOUT_MS)
-    if (text === null) {
+    let copied = await waitForCopied(COPY_TIMEOUT_MS)
+    if (copied === null) {
       // Apps sometimes drop a synthetic ⌘C (busy, or still handling the hotkey). Copying again is harmless.
       await runJxa(COPY_SELECTION_SCRIPT)
-      text = await waitForCopiedText(COPY_RETRY_TIMEOUT_MS)
+      copied = await waitForCopied(COPY_RETRY_TIMEOUT_MS)
     }
-    return { text: text ?? '', sourceAppId }
+    return { text: copied?.text ?? '', files: copied?.files ?? [], sourceAppId }
   } catch (error) {
     console.error('[selection] Could not read the selection.', error)
-    return { text: '', sourceAppId: null }
+    return { text: '', files: [], sourceAppId: null }
   } finally {
     pendingRestore = clipboardService.restore(original)
   }

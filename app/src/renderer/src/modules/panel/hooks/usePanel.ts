@@ -1,70 +1,86 @@
+import type { QuickAction } from '@shared/types'
 import { useCallback, useState } from 'react'
 import { useTransientFlag } from '../../../hooks/useTransientFlag'
 import { bridge } from '../../../services/bridge.service'
 import { PROMPT_PLACEHOLDERS } from '../constants/panel.constants'
-import type { RunInput } from '../types/panel.types'
-import { useAiStream } from './useAiStream'
+import { useConversation } from './useConversation'
 import { usePanelSession } from './usePanelSession'
 import { usePanelShortcuts } from './usePanelShortcuts'
 
-/** Everything the panel does: run prompts on the selection with an optional preset, refine results, copy and paste. */
+/** Everything the panel does: a conversation about the selection with an optional preset, copy and paste. */
 export function usePanel() {
-  const stream = useAiStream()
+  const conversation = useConversation()
   const [prompt, setPrompt] = useState('')
-  const [lastRun, setLastRun] = useState<RunInput | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
   const [copied, flashCopied] = useTransientFlag()
   // The chosen preset stays picked across sessions until changed.
   const [presetId, setPresetId] = useState<string | null>(null)
   const [presetMenuOpen, setPresetMenuOpen] = useState(false)
+  const [removedAttachmentIds, setRemovedAttachmentIds] = useState<string[]>([])
 
-  const { reset: resetStream } = stream
+  const { reset: resetConversation } = conversation
   const resetSession = useCallback(() => {
-    resetStream()
+    resetConversation()
     setPrompt('')
-    setLastRun(null)
     setActionError(null)
     setPresetMenuOpen(false)
-  }, [resetStream])
+    setRemovedAttachmentIds([])
+  }, [resetConversation])
 
   const { context, sessionId } = usePanelSession(resetSession)
 
-  const isStreaming = stream.status === 'streaming'
-  const hasResult = stream.status === 'done' && stream.output.trim().length > 0
-  // Once there is a result, follow-up prompts refine it instead of the original selection.
-  const workingText = hasResult ? stream.output : context.selectedText
+  const { lastTurn } = conversation
+  const isStreaming = lastTurn?.status === 'streaming'
+  const hasResult = lastTurn?.status === 'done' && lastTurn.output.trim().length > 0
+  const result = hasResult ? lastTurn.output : ''
+  // Quick actions work on the latest answer once there is one, otherwise on the selection.
+  const workingText = result || context.selectedText
+  const attachments = context.attachments.filter((attachment) => !removedAttachmentIds.includes(attachment.id))
+  const hasAttachments = attachments.length > 0
   // Null if the preset was removed or disabled since it was picked.
   const activePreset = context.presets.find((preset) => preset.id === presetId) ?? null
 
   const placeholder = hasResult
     ? PROMPT_PLACEHOLDERS.refining
-    : context.selectedText
-      ? PROMPT_PLACEHOLDERS.withSelection
-      : PROMPT_PLACEHOLDERS.withoutSelection
+    : hasAttachments
+      ? PROMPT_PLACEHOLDERS.withFiles
+      : context.selectedText
+        ? PROMPT_PLACEHOLDERS.withSelection
+        : PROMPT_PLACEHOLDERS.withoutSelection
 
-  const run = (instruction: string): void => {
+  /** Sends a prompt; `label` is what the conversation shows for it (defaults to the instruction). */
+  const run = (instruction: string, label = instruction): void => {
     if (!instruction.trim() || isStreaming || context.capturing) return
-    const input = { instruction: instruction.trim(), text: workingText, presetId: activePreset?.id ?? null }
     setActionError(null)
-    setLastRun(input)
     setPrompt('')
-    stream.run(input)
+    conversation.send({
+      instruction: instruction.trim(),
+      label: label.trim(),
+      text: context.selectedText,
+      presetId: activePreset?.id ?? null,
+      attachmentIds: attachments.filter((attachment) => !attachment.error).map((attachment) => attachment.id)
+    })
   }
 
-  const regenerate = (): void => {
-    if (lastRun && !isStreaming) stream.run(lastRun)
-  }
+  const runQuickAction = (action: QuickAction): void => run(action.instruction, action.label)
 
   const copy = async (): Promise<void> => {
     if (!hasResult) return
-    await bridge.panel.copy(stream.output)
+    await bridge.panel.copy(result)
     flashCopied()
+    // Done with the panel once the result is on the clipboard, as with Paste.
+    bridge.panel.hide()
   }
 
+  const removeAttachment = (id: string): void => setRemovedAttachmentIds((ids) => [...ids, id])
+
+  // Files come from Finder and the like, where pasting text makes no sense; the result is copied instead.
+  const canPaste = context.attachments.length === 0
+
   const paste = async (): Promise<void> => {
-    if (!hasResult) return
-    const result = await bridge.panel.paste(stream.output)
-    if (!result.ok) setActionError(result.error)
+    if (!hasResult || !canPaste) return
+    const pasted = await bridge.panel.paste(result)
+    if (!pasted.ok) setActionError(pasted.error)
   }
 
   const selectPreset = (id: string | null): void => {
@@ -78,7 +94,7 @@ export function usePanel() {
 
   const escape = (): void => {
     if (presetMenuOpen) setPresetMenuOpen(false)
-    else if (isStreaming) stream.cancel()
+    else if (isStreaming) conversation.cancel()
     else bridge.panel.hide()
   }
 
@@ -91,7 +107,11 @@ export function usePanel() {
     setPrompt,
     placeholder,
     workingText,
-    stream,
+    attachments,
+    hasAttachments,
+    removeAttachment,
+    canPaste,
+    turns: conversation.turns,
     isStreaming,
     hasResult,
     copied,
@@ -101,9 +121,10 @@ export function usePanel() {
     selectPreset,
     togglePresetMenu,
     run,
-    regenerate,
+    runQuickAction,
+    regenerate: conversation.regenerate,
     copy,
     paste,
-    stop: stream.cancel
+    stop: conversation.cancel
   }
 }

@@ -1,10 +1,11 @@
 import { QUICK_ACTIONS } from '@shared/constants'
+import type { QuickAction } from '@shared/types'
 import { QuickActionButton } from './QuickActionButton'
 
 interface QuickActionsProps {
   hasText: boolean
   disabled: boolean
-  onRun: (instruction: string) => void
+  onRun: (action: QuickAction) => void
 }
 
 /** Row of quick action buttons. Actions that need text are disabled when there is nothing to work on. */

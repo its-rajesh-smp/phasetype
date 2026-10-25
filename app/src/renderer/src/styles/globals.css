@@ -20,6 +20,12 @@
   --color-danger: #b4412d;
   --color-success: #4b7a2c;
 
+  /* macOS window buttons */
+  --color-traffic-close: #ff5f57;
+  --color-traffic-close-edge: #e2463f;
+  --color-traffic-idle: #d9d3c7;
+  --color-traffic-idle-edge: #c9c1b2;
+
   --shadow-lime: 0 12px 28px -12px rgb(198 222 32 / 0.85);
   --shadow-card: 0 1px 0 rgb(22 19 15 / 0.04), 0 18px 40px -24px rgb(22 19 15 / 0.25);
 

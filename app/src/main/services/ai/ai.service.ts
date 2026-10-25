@@ -1,8 +1,9 @@
 import type { WebContents } from 'electron'
 import { IPC } from '@shared/constants'
-import type { AiRunRequest, AiStreamEvent, Result } from '@shared/types'
+import type { AiRunRequest, AiStreamEvent, ChatTurn, Result } from '@shared/types'
 import { buildMessages } from '../../helpers'
 import { isAbortError, toErrorMessage } from '../../utils'
+import { attachmentService } from '../attachment.service'
 import { settingsStore } from '../settings.store'
 import { getProvider } from './provider.registry'
 
@@ -28,21 +29,25 @@ interface StreamTextInput {
   instruction: string
   text: string
   presetId?: string | null
+  attachmentIds?: string[]
+  history?: ChatTurn[]
   signal: AbortSignal
   onDelta: (delta: string) => void
 }
 
 /** Streams a completion from the configured provider. Throws if setup is unfinished or the request fails. */
-async function streamText({ instruction, text, presetId, signal, onDelta }: StreamTextInput): Promise<void> {
+async function streamText({ instruction, text, presetId, attachmentIds = [], history = [], signal, onDelta }: StreamTextInput): Promise<void> {
   const apiKey = settingsStore.getApiKey()
   const settings = settingsStore.getSettings()
   if (!apiKey || !settings.model) throw new Error('Finish setup in Settings: an API key and model are required.')
   const preset = presetId ? settings.presets.find((item) => item.id === presetId && item.enabled) : null
+  const attachments = await attachmentService.loadAll(attachmentIds)
+  signal.throwIfAborted()
 
   await getProvider(settings.provider).streamCompletion({
     apiKey,
     model: settings.model,
-    messages: buildMessages({ systemPrompt: settings.systemPrompt, preset, instruction, text }),
+    messages: buildMessages({ systemPrompt: settings.systemPrompt, preset, instruction, text, attachments, history }),
     signal,
     onDelta
   })

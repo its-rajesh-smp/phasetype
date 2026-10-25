@@ -1,7 +1,7 @@
 import { QUICK_FIX_ACTION } from '@shared/constants'
 import { aiService, permissionsService, selectionService } from '../services'
 import { isAbortError, toErrorMessage } from '../utils'
-import { hideStatus, isPanelVisible, showStatus } from '../windows'
+import { hideStatus, isPanelFocused, showStatus } from '../windows'
 
 let controller: AbortController | null = null
 
@@ -24,7 +24,7 @@ export async function handleQuickFixHotkey(): Promise<void> {
     controller.abort()
     return
   }
-  if (isPanelVisible()) return
+  if (isPanelFocused()) return
 
   if (!permissionsService.isAccessibilityGranted()) {
     showStatus({ state: 'error', message: 'PhaseType needs Accessibility access. Grant it in Settings.' })

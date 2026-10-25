@@ -1,4 +1,5 @@
 export * from './ai.types'
+export * from './attachment.types'
 export * from './bridge.types'
 export * from './panel.types'
 export * from './preset.types'

@@ -1,5 +1,8 @@
 import { clipboard, ClipboardItem } from 'electron'
+import { fileURLToPath } from 'url'
 import type { ClipboardSnapshot } from '../types'
+
+const URI_LIST_TYPE = 'text/uri-list'
 
 /**
  * Captures every item and format on the clipboard so it can be restored later.
@@ -43,11 +46,31 @@ async function restore(items: ClipboardSnapshot): Promise<void> {
   }
 }
 
+/** Paths of the files on the clipboard (e.g. after ⌘C in Finder), from its `text/uri-list`. Empty if there are none. */
+async function readFilePaths(): Promise<string[]> {
+  try {
+    if (!(await clipboard.has(URI_LIST_TYPE))) return []
+    const item = (await clipboard.read()).find((entry) => entry.types.includes(URI_LIST_TYPE))
+    if (!item) return []
+    const value = await item.getType(URI_LIST_TYPE)
+    const list = typeof value === 'string' ? value : await (value as Blob).text()
+    return list
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .filter((line) => line.startsWith('file://'))
+      .map((url) => fileURLToPath(url))
+  } catch (error) {
+    console.error('[clipboard] Could not read copied files.', error)
+    return []
+  }
+}
+
 /** Wraps the system clipboard, including full snapshot/restore so the user's clipboard is preserved. */
 export const clipboardService = {
   snapshot,
   restore,
   clear: (): void => clipboard.clear(),
   readText: (): Promise<string> => clipboard.readText(),
+  readFilePaths,
   writeText: (text: string): Promise<void> => clipboard.writeText(text)
 }

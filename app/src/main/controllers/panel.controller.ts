@@ -1,19 +1,21 @@
 import type { Result } from '@shared/types'
 import { listEnabledPresets } from '@shared/utils'
-import { permissionsService, selectionService, settingsStore } from '../services'
+import { attachmentService, permissionsService, selectionService, settingsStore } from '../services'
 import { toErrorMessage } from '../utils'
-import { hidePanel, isPanelVisible, showPanel } from '../windows'
+import { hidePanel, isPanelFocused, isPanelVisible, showPanel } from '../windows'
 import { isQuickFixRunning } from './quickFix.controller'
 
 let sourceAppId: string | null = null
 let capturing = false
 
 /**
- * Hotkey pressed: opens the panel straight away, reads the selection in the frontmost app, then focuses the panel.
- * Pressing it again closes the panel.
+ * Hotkey pressed: opens the panel straight away, reads the selection (text, or files e.g. in Finder) in the frontmost app,
+ * then focuses the panel.
+ * Pressing it again while the panel is focused closes it; pressing it in another app while the panel is open
+ * reads that app's selection into the panel instead.
  */
 export async function handleHotkey(): Promise<void> {
-  if (isPanelVisible()) {
+  if (isPanelFocused()) {
     hidePanel()
     return
   }
@@ -24,19 +26,21 @@ export async function handleHotkey(): Promise<void> {
   try {
     const accessibilityGranted = permissionsService.isAccessibilityGranted()
     const presets = listEnabledPresets(settingsStore.getSettings().presets)
+    attachmentService.clear()
     if (!accessibilityGranted) {
       sourceAppId = null
-      showPanel({ selectedText: '', accessibilityGranted, capturing: false, presets })
+      showPanel({ selectedText: '', attachments: [], accessibilityGranted, capturing: false, presets })
       return
     }
 
     // Show it unfocused first, so the ⌘C sent while reading the selection still reaches the other app.
-    showPanel({ selectedText: '', accessibilityGranted, capturing: true, presets }, { focus: false })
+    showPanel({ selectedText: '', attachments: [], accessibilityGranted, capturing: true, presets }, { focus: false })
     const selection = await selectionService.captureSelection()
     sourceAppId = selection.sourceAppId
+    const attachments = await attachmentService.capture(selection.files)
     // The hotkey was pressed again while reading the selection, closing the panel.
     if (!isPanelVisible()) return
-    showPanel({ selectedText: selection.text, accessibilityGranted, capturing: false, presets })
+    showPanel({ selectedText: selection.text, attachments, accessibilityGranted, capturing: false, presets })
   } finally {
     capturing = false
   }
