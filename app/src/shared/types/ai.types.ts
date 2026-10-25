@@ -5,6 +5,8 @@ export interface AiRunRequest {
   instruction: string
   /** Text the instruction applies to. Empty when the user is writing from scratch. */
   text: string
+  /** Preset whose style and details are added to the system prompt. */
+  presetId?: string | null
 }
 
 export type AiStreamEvent =

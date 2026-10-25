@@ -1,5 +1,6 @@
 import type { Result } from '@shared/types'
-import { permissionsService, selectionService } from '../services'
+import { listEnabledPresets } from '@shared/utils'
+import { permissionsService, selectionService, settingsStore } from '../services'
 import { toErrorMessage } from '../utils'
 import { hidePanel, isPanelVisible, showPanel } from '../windows'
 import { isQuickFixRunning } from './quickFix.controller'
@@ -22,19 +23,20 @@ export async function handleHotkey(): Promise<void> {
 
   try {
     const accessibilityGranted = permissionsService.isAccessibilityGranted()
+    const presets = listEnabledPresets(settingsStore.getSettings().presets)
     if (!accessibilityGranted) {
       sourceAppId = null
-      showPanel({ selectedText: '', accessibilityGranted, capturing: false })
+      showPanel({ selectedText: '', accessibilityGranted, capturing: false, presets })
       return
     }
 
     // Show it unfocused first, so the ⌘C sent while reading the selection still reaches the other app.
-    showPanel({ selectedText: '', accessibilityGranted, capturing: true }, { focus: false })
+    showPanel({ selectedText: '', accessibilityGranted, capturing: true, presets }, { focus: false })
     const selection = await selectionService.captureSelection()
     sourceAppId = selection.sourceAppId
     // The hotkey was pressed again while reading the selection, closing the panel.
     if (!isPanelVisible()) return
-    showPanel({ selectedText: selection.text, accessibilityGranted, capturing: false })
+    showPanel({ selectedText: selection.text, accessibilityGranted, capturing: false, presets })
   } finally {
     capturing = false
   }

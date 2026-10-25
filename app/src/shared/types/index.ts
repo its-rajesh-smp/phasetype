@@ -1,6 +1,7 @@
 export * from './ai.types'
 export * from './bridge.types'
 export * from './panel.types'
+export * from './preset.types'
 export * from './result.types'
 export * from './settings.types'
 export * from './status.types'

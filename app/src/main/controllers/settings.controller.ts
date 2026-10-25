@@ -1,4 +1,5 @@
 import type { AppSettings, HotkeySettingKey, PublicSettings, Result, SettingsUpdate } from '@shared/types'
+import { sanitizePresets } from '../helpers'
 import { hotkeyService, loginItemService, settingsStore, trayService } from '../services'
 import { handleHotkey } from './panel.controller'
 import { handleQuickFixHotkey } from './quickFix.controller'
@@ -6,7 +7,7 @@ import { handleQuickFixHotkey } from './quickFix.controller'
 const HOTKEY_TAKEN_ERROR = 'That shortcut is already used by macOS or another app. Try a different one.'
 const HOTKEY_DUPLICATE_ERROR = 'The panel and quick fix shortcuts must be different.'
 
-const UPDATABLE_KEYS: (keyof SettingsUpdate)[] = ['provider', 'model', 'hotkey', 'quickFixHotkey', 'systemPrompt', 'launchAtLogin']
+const UPDATABLE_KEYS: (keyof SettingsUpdate)[] = ['provider', 'model', 'hotkey', 'quickFixHotkey', 'systemPrompt', 'presets', 'launchAtLogin']
 
 const HOTKEY_KEYS: HotkeySettingKey[] = ['hotkey', 'quickFixHotkey']
 
@@ -60,6 +61,7 @@ export function registerHotkeys(): Result {
  */
 export function updateSettings(patch: SettingsUpdate): Result<PublicSettings> {
   const changes = pickAllowed(patch)
+  if (changes.presets !== undefined) changes.presets = sanitizePresets(changes.presets)
   const next = { ...settingsStore.getSettings(), ...changes }
 
   for (const key of HOTKEY_KEYS) {

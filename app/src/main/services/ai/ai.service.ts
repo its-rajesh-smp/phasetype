@@ -27,20 +27,22 @@ async function verifyKey(apiKey?: string): Promise<Result<string[]>> {
 interface StreamTextInput {
   instruction: string
   text: string
+  presetId?: string | null
   signal: AbortSignal
   onDelta: (delta: string) => void
 }
 
 /** Streams a completion from the configured provider. Throws if setup is unfinished or the request fails. */
-async function streamText({ instruction, text, signal, onDelta }: StreamTextInput): Promise<void> {
+async function streamText({ instruction, text, presetId, signal, onDelta }: StreamTextInput): Promise<void> {
   const apiKey = settingsStore.getApiKey()
   const settings = settingsStore.getSettings()
   if (!apiKey || !settings.model) throw new Error('Finish setup in Settings: an API key and model are required.')
+  const preset = presetId ? settings.presets.find((item) => item.id === presetId && item.enabled) : null
 
   await getProvider(settings.provider).streamCompletion({
     apiKey,
     model: settings.model,
-    messages: buildMessages({ systemPrompt: settings.systemPrompt, instruction, text }),
+    messages: buildMessages({ systemPrompt: settings.systemPrompt, preset, instruction, text }),
     signal,
     onDelta
   })

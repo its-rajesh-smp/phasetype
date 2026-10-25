@@ -8,7 +8,7 @@
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
-    "dev": "yarn build:helper && electron-vite dev",
+    "dev": "yarn build:helper && electron-vite dev --watch",
     "build": "yarn build:helper && electron-vite build",
     "preview": "electron-vite preview",
     "typecheck:node": "tsc --noEmit -p tsconfig.node.json",

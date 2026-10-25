@@ -1,4 +1,5 @@
 import type { AiProviderId } from './ai.types'
+import type { Preset } from './preset.types'
 
 export interface AppSettings {
   provider: AiProviderId
@@ -8,6 +9,7 @@ export interface AppSettings {
   /** Fixes the selection in place, without opening the panel. */
   quickFixHotkey: string
   systemPrompt: string
+  presets: Preset[]
   launchAtLogin: boolean
   onboarded: boolean
 }

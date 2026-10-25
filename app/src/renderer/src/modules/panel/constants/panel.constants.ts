@@ -1,7 +1,7 @@
 import { SpellCheck, type LucideIcon } from 'lucide-react'
 import type { PanelContext } from '@shared/types'
 
-export const EMPTY_PANEL_CONTEXT: PanelContext = { selectedText: '', accessibilityGranted: true, capturing: false }
+export const EMPTY_PANEL_CONTEXT: PanelContext = { selectedText: '', accessibilityGranted: true, capturing: false, presets: [] }
 
 export const QUICK_ACTION_ICONS: Record<string, LucideIcon> = {
   fix: SpellCheck

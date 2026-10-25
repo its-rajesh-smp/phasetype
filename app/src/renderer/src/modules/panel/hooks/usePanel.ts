@@ -7,13 +7,16 @@ import { useAiStream } from './useAiStream'
 import { usePanelSession } from './usePanelSession'
 import { usePanelShortcuts } from './usePanelShortcuts'
 
-/** Everything the panel does: run prompts on the selection, refine results, copy and paste. */
+/** Everything the panel does: run prompts on the selection with an optional preset, refine results, copy and paste. */
 export function usePanel() {
   const stream = useAiStream()
   const [prompt, setPrompt] = useState('')
   const [lastRun, setLastRun] = useState<RunInput | null>(null)
   const [actionError, setActionError] = useState<string | null>(null)
   const [copied, flashCopied] = useTransientFlag()
+  // The chosen preset stays picked across sessions until changed.
+  const [presetId, setPresetId] = useState<string | null>(null)
+  const [presetMenuOpen, setPresetMenuOpen] = useState(false)
 
   const { reset: resetStream } = stream
   const resetSession = useCallback(() => {
@@ -21,6 +24,7 @@ export function usePanel() {
     setPrompt('')
     setLastRun(null)
     setActionError(null)
+    setPresetMenuOpen(false)
   }, [resetStream])
 
   const { context, sessionId } = usePanelSession(resetSession)
@@ -29,6 +33,8 @@ export function usePanel() {
   const hasResult = stream.status === 'done' && stream.output.trim().length > 0
   // Once there is a result, follow-up prompts refine it instead of the original selection.
   const workingText = hasResult ? stream.output : context.selectedText
+  // Null if the preset was removed or disabled since it was picked.
+  const activePreset = context.presets.find((preset) => preset.id === presetId) ?? null
 
   const placeholder = hasResult
     ? PROMPT_PLACEHOLDERS.refining
@@ -38,7 +44,7 @@ export function usePanel() {
 
   const run = (instruction: string): void => {
     if (!instruction.trim() || isStreaming || context.capturing) return
-    const input = { instruction: instruction.trim(), text: workingText }
+    const input = { instruction: instruction.trim(), text: workingText, presetId: activePreset?.id ?? null }
     setActionError(null)
     setLastRun(input)
     setPrompt('')
@@ -61,12 +67,22 @@ export function usePanel() {
     if (!result.ok) setActionError(result.error)
   }
 
+  const selectPreset = (id: string | null): void => {
+    setPresetId(id)
+    setPresetMenuOpen(false)
+  }
+
+  const togglePresetMenu = (): void => {
+    if (!isStreaming) setPresetMenuOpen((open) => !open)
+  }
+
   const escape = (): void => {
-    if (isStreaming) stream.cancel()
+    if (presetMenuOpen) setPresetMenuOpen(false)
+    else if (isStreaming) stream.cancel()
     else bridge.panel.hide()
   }
 
-  usePanelShortcuts({ onEscape: escape, onPaste: () => void paste(), onCopy: () => void copy() })
+  usePanelShortcuts({ onEscape: escape, onPaste: () => void paste(), onCopy: () => void copy(), onTogglePresets: togglePresetMenu })
 
   return {
     context,
@@ -80,6 +96,10 @@ export function usePanel() {
     hasResult,
     copied,
     actionError,
+    activePreset,
+    presetMenuOpen,
+    selectPreset,
+    togglePresetMenu,
     run,
     regenerate,
     copy,

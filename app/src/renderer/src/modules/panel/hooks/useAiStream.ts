@@ -38,7 +38,7 @@ export function useAiStream() {
   }, [])
 
   const run = useCallback(
-    ({ instruction, text }: RunInput) => {
+    ({ instruction, text, presetId }: RunInput) => {
       cancel()
       const requestId = createId()
       requestIdRef.current = requestId
@@ -46,7 +46,7 @@ export function useAiStream() {
       setOutput('')
       setError(null)
       setStatus('streaming')
-      bridge.ai.run({ requestId, instruction, text })
+      bridge.ai.run({ requestId, instruction, text, presetId })
     },
     [cancel]
   )

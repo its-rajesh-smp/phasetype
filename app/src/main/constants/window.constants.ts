@@ -1,7 +1,8 @@
 export const MAIN_WINDOW = {
-  width: 560,
+  /** Wide enough for the Presets tab's list and editor side by side. */
+  width: 1140,
   height: 720,
-  minWidth: 480,
+  minWidth: 845,
   minHeight: 600,
   backgroundColor: '#F4EEE2'
 } as const
