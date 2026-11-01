@@ -9,6 +9,8 @@ export interface ChatTurn {
 export interface AiRunRequest {
   requestId: string
   instruction: string
+  /** What the history shows for the prompt, e.g. a quick action's short label. Defaults to the instruction. */
+  label?: string
   /** Earlier prompts and answers in this panel session, oldest first, so follow-ups have context. */
   history?: ChatTurn[]
   /** Text the instruction applies to. Empty when the user is writing from scratch. */
@@ -21,6 +23,8 @@ export interface AiRunRequest {
 
 export type AiStreamEvent =
   | { requestId: string; type: 'delta'; delta: string }
+  /** What's happening before the answer starts, e.g. "Transcribing call.mp4…". */
+  | { requestId: string; type: 'status'; message: string }
   | { requestId: string; type: 'done' }
   | { requestId: string; type: 'error'; message: string }
 

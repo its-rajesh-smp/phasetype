@@ -41,6 +41,10 @@ const bridge: PhaseTypeBridge = {
   status: {
     onUpdate: (listener) => subscribe<QuickFixStatus | null>(IPC.statusUpdate, listener)
   },
+  usage: {
+    list: () => ipcRenderer.invoke(IPC.usageList),
+    clear: () => ipcRenderer.invoke(IPC.usageClear)
+  },
   app: {
     openSettings: () => ipcRenderer.send(IPC.appOpenSettings),
     closeWindow: () => ipcRenderer.send(IPC.appCloseWindow),

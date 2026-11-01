@@ -28,7 +28,14 @@ export function ConversationTurnView({ turn, presetName, isLatest, onRegenerate 
       {turn.status === 'error' && turn.error ? (
         <InlineMessage tone="error">{turn.error}</InlineMessage>
       ) : isStreaming && !turn.output ? (
-        <WritingPlaceholder />
+        <div className="flex flex-col gap-2">
+          <WritingPlaceholder />
+          {turn.progress && (
+            <p aria-live="polite" className="text-[12px] text-subtle">
+              {turn.progress}
+            </p>
+          )}
+        </div>
       ) : (
         <p data-selectable className={cn('text-[15px] leading-relaxed whitespace-pre-wrap', isLatest ? 'text-ink' : 'text-ink-soft')}>
           {turn.output}

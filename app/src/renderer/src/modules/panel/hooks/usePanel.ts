@@ -37,16 +37,19 @@ export function usePanel() {
   const workingText = result || context.selectedText
   const attachments = context.attachments.filter((attachment) => !removedAttachmentIds.includes(attachment.id))
   const hasAttachments = attachments.length > 0
+  const hasMedia = attachments.some((attachment) => attachment.kind === 'audio' || attachment.kind === 'video')
   // Null if the preset was removed or disabled since it was picked.
   const activePreset = context.presets.find((preset) => preset.id === presetId) ?? null
 
   const placeholder = hasResult
     ? PROMPT_PLACEHOLDERS.refining
-    : hasAttachments
-      ? PROMPT_PLACEHOLDERS.withFiles
-      : context.selectedText
-        ? PROMPT_PLACEHOLDERS.withSelection
-        : PROMPT_PLACEHOLDERS.withoutSelection
+    : hasMedia
+      ? PROMPT_PLACEHOLDERS.withMedia
+      : hasAttachments
+        ? PROMPT_PLACEHOLDERS.withFiles
+        : context.selectedText
+          ? PROMPT_PLACEHOLDERS.withSelection
+          : PROMPT_PLACEHOLDERS.withoutSelection
 
   /** Sends a prompt; `label` is what the conversation shows for it (defaults to the instruction). */
   const run = (instruction: string, label = instruction): void => {

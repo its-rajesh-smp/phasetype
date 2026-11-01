@@ -1,13 +1,10 @@
 import { execFile } from 'child_process'
-import { app } from 'electron'
-import { join } from 'path'
 import { AX_HELPER_TIMEOUT_MS } from '../constants'
 import type { CapturedSelection } from '../types'
+import { nativeHelperPath } from '../utils'
 
-/** The helper built from native/ax-helper: bundled in Resources when packaged, in native/bin during development. */
-const HELPER_PATH = app.isPackaged
-  ? join(process.resourcesPath, 'phasetype-ax')
-  : join(app.getAppPath(), 'native/bin/phasetype-ax')
+/** The helper built from native/ax-helper. */
+const HELPER_PATH = nativeHelperPath('phasetype-ax')
 
 interface HelperOutput {
   ok: boolean

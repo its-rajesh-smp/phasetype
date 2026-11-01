@@ -43,7 +43,10 @@ export async function handleQuickFixHotkey(): Promise<void> {
       return
     }
 
-    const output = await aiService.complete({ instruction: QUICK_FIX_ACTION.instruction, text: selection.text }, current.signal)
+    const output = await aiService.complete(
+      { instruction: QUICK_FIX_ACTION.instruction, label: QUICK_FIX_ACTION.label, text: selection.text, source: 'quickFix' },
+      current.signal
+    )
     current.signal.throwIfAborted()
     if (!output.trim()) {
       showStatus({ state: 'error', message: 'The AI returned an empty result. Try again.' })

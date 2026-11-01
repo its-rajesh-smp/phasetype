@@ -3,6 +3,7 @@ import type { PanelContext } from './panel.types'
 import type { Result } from './result.types'
 import type { PublicSettings, SettingsUpdate } from './settings.types'
 import type { QuickFixStatus } from './status.types'
+import type { UsageRecord } from './usage.types'
 
 export type Unsubscribe = () => void
 
@@ -40,6 +41,11 @@ export interface PhaseTypeBridge {
   status: {
     /** Receives the status to show, or null once the pill is hidden. */
     onUpdate(listener: (status: QuickFixStatus | null) => void): Unsubscribe
+  }
+  usage: {
+    /** The saved request history, newest first. */
+    list(): Promise<UsageRecord[]>
+    clear(): Promise<void>
   }
   app: {
     openSettings(): void

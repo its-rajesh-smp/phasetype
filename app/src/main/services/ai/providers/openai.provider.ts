@@ -1,5 +1,6 @@
-import { NON_CHAT_MODEL_MARKERS, OPENAI_BASE_URL } from '../../../constants'
-import type { AiProvider, StreamCompletionOptions } from '../../../types'
+import type { TokenUsage } from '@shared/types'
+import { NON_CHAT_MODEL_MARKERS, OPENAI_BASE_URL, OPENAI_TRANSCRIBE_MODEL } from '../../../constants'
+import type { AiProvider, StreamCompletionOptions, TranscribeOptions, Transcription } from '../../../types'
 
 /** Headers for authenticated JSON requests to the OpenAI API. */
 const authHeaders = (apiKey: string): Record<string, string> => ({
@@ -36,25 +37,43 @@ async function listModels(apiKey: string): Promise<string[]> {
     .sort()
 }
 
-/** Parses one server-sent-events line and returns its text delta, if any. */
-function parseSseLine(line: string): string | null {
+interface OpenAiUsage {
+  prompt_tokens?: number
+  completion_tokens?: number
+  prompt_tokens_details?: { cached_tokens?: number }
+}
+
+const toTokenUsage = (usage: OpenAiUsage): TokenUsage => ({
+  inputTokens: usage.prompt_tokens ?? 0,
+  cachedInputTokens: usage.prompt_tokens_details?.cached_tokens ?? 0,
+  outputTokens: usage.completion_tokens ?? 0
+})
+
+interface SseChunk {
+  delta: string | null
+  usage: TokenUsage | null
+}
+
+/** Parses one server-sent-events line into its text delta and, on the final chunk, the tokens used. */
+function parseSseLine(line: string): SseChunk | null {
   const trimmed = line.trim()
   if (!trimmed.startsWith('data:')) return null
   const payload = trimmed.slice(5).trim()
   if (!payload || payload === '[DONE]') return null
-  const chunk = JSON.parse(payload) as { choices?: { delta?: { content?: string | null } }[] }
-  return chunk.choices?.[0]?.delta?.content ?? null
+  const chunk = JSON.parse(payload) as { choices?: { delta?: { content?: string | null } }[]; usage?: OpenAiUsage | null }
+  return { delta: chunk.choices?.[0]?.delta?.content ?? null, usage: chunk.usage ? toTokenUsage(chunk.usage) : null }
 }
 
 /**
- * Streams a chat completion, calling `onDelta` for each text chunk as it arrives.
+ * Streams a chat completion, calling `onDelta` for each text chunk as it arrives, and resolves with the tokens used.
  * Throws on API errors; honours `signal` for cancellation.
  */
-async function streamCompletion({ apiKey, model, messages, signal, onDelta }: StreamCompletionOptions): Promise<void> {
+async function streamCompletion({ apiKey, model, messages, signal, onDelta }: StreamCompletionOptions): Promise<TokenUsage | null> {
   const response = await fetch(`${OPENAI_BASE_URL}/chat/completions`, {
     method: 'POST',
     headers: authHeaders(apiKey),
-    body: JSON.stringify({ model, messages, stream: true }),
+    // The usage arrives in one extra chunk at the end of the stream.
+    body: JSON.stringify({ model, messages, stream: true, stream_options: { include_usage: true } }),
     signal
   })
   if (!response.ok) throw await toApiError(response)
@@ -63,6 +82,11 @@ async function streamCompletion({ apiKey, model, messages, signal, onDelta }: St
   const reader = response.body.getReader()
   const decoder = new TextDecoder()
   let buffer = ''
+  let usage: TokenUsage | null = null
+  const handle = (chunk: SseChunk | null): void => {
+    if (chunk?.delta) onDelta(chunk.delta)
+    if (chunk?.usage) usage = chunk.usage
+  }
 
   for (;;) {
     const { done, value } = await reader.read()
@@ -70,15 +94,34 @@ async function streamCompletion({ apiKey, model, messages, signal, onDelta }: St
     buffer += decoder.decode(value, { stream: true })
     const lines = buffer.split('\n')
     buffer = lines.pop() ?? ''
-    for (const line of lines) {
-      const delta = parseSseLine(line)
-      if (delta) onDelta(delta)
-    }
+    lines.forEach((line) => handle(parseSseLine(line)))
   }
 
-  const trailing = parseSseLine(buffer)
-  if (trailing) onDelta(trailing)
+  handle(parseSseLine(buffer))
+  return usage
+}
+
+/** Transcribes one audio clip. Throws on API errors; honours `signal` for cancellation. */
+async function transcribe({ apiKey, clip, signal }: TranscribeOptions): Promise<Transcription> {
+  const form = new FormData()
+  form.append('model', OPENAI_TRANSCRIBE_MODEL)
+  form.append('response_format', 'json')
+  form.append('file', new Blob([new Uint8Array(clip.data)], { type: 'audio/mp4' }), clip.filename)
+
+  const response = await fetch(`${OPENAI_BASE_URL}/audio/transcriptions`, {
+    method: 'POST',
+    // No Content-Type: fetch sets the multipart boundary itself.
+    headers: { Authorization: `Bearer ${apiKey}` },
+    body: form,
+    signal
+  })
+  if (!response.ok) throw await toApiError(response)
+  const body = (await response.json()) as { text?: string; usage?: { input_tokens?: number; output_tokens?: number } }
+  const usage = body.usage
+    ? { inputTokens: body.usage.input_tokens ?? 0, cachedInputTokens: 0, outputTokens: body.usage.output_tokens ?? 0 }
+    : null
+  return { text: body.text ?? '', model: OPENAI_TRANSCRIBE_MODEL, usage }
 }
 
 /** OpenAI implementation of the AI provider interface. */
-export const openAiProvider: AiProvider = { listModels, streamCompletion }
+export const openAiProvider: AiProvider = { listModels, streamCompletion, transcribe }

@@ -1,17 +1,21 @@
 import type { AttachmentSummary } from '@shared/types'
-import { FileText, X } from 'lucide-react'
+import { X } from 'lucide-react'
 import { cn } from '../../../utils/cn.util'
-import { formatBytes } from '../../../utils/text.util'
+import { formatBytes, formatDuration } from '../../../utils/text.util'
+import { ATTACHMENT_ICONS, DEFAULT_ATTACHMENT_ICON } from '../constants/panel.constants'
 
 interface AttachmentChipProps {
   attachment: AttachmentSummary
   onRemove: () => void
 }
 
-/** A captured file: thumbnail, name, type and size (or why it can't be sent), with a remove button. */
+/** A captured file: thumbnail, name, type, length and size (or why it can't be sent), with a remove button. */
 export function AttachmentChip({ attachment, onRemove }: AttachmentChipProps): React.JSX.Element {
-  const { name, extension, sizeBytes, thumbnail, error } = attachment
-  const meta = [extension, sizeBytes ? formatBytes(sizeBytes) : ''].filter(Boolean).join(' · ')
+  const { name, extension, sizeBytes, durationSeconds, kind, thumbnail, error } = attachment
+  const meta = [extension, durationSeconds ? formatDuration(durationSeconds) : '', sizeBytes ? formatBytes(sizeBytes) : '']
+    .filter(Boolean)
+    .join(' · ')
+  const Icon = (kind && ATTACHMENT_ICONS[kind]) || DEFAULT_ATTACHMENT_ICON
 
   return (
     <li
@@ -24,7 +28,7 @@ export function AttachmentChip({ attachment, onRemove }: AttachmentChipProps): R
         {thumbnail ? (
           <img src={thumbnail} alt="" draggable={false} className="size-full object-contain" />
         ) : (
-          <FileText className="size-5 text-muted" strokeWidth={1.6} />
+          <Icon className="size-5 text-muted" strokeWidth={1.6} />
         )}
       </span>
       <span className="flex min-w-0 flex-col">

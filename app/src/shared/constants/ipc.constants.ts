@@ -23,6 +23,9 @@ export const IPC = {
 
   statusUpdate: 'status:update',
 
+  usageList: 'usage:list',
+  usageClear: 'usage:clear',
+
   appOpenSettings: 'app:open-settings',
   appCloseWindow: 'app:close-window',
   appQuit: 'app:quit',

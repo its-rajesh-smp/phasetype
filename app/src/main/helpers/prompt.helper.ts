@@ -28,7 +28,40 @@ function presetSection(preset: Preset): string {
   ].join('\n\n')
 }
 
-/** Turns a file into message parts: text files inline in `<file>` tags, images and PDFs as their own parts. */
+/** Formats seconds as m:ss or h:mm:ss, e.g. 75 → "1:15". */
+function formatTimestamp(totalSeconds: number): string {
+  const seconds = Math.floor(totalSeconds)
+  const [h, m, s] = [Math.floor(seconds / 3600), Math.floor((seconds % 3600) / 60), seconds % 60]
+  const pad = (value: number): string => String(value).padStart(2, '0')
+  return h ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`
+}
+
+/** A recording as a transcript in `<transcript>` tags, then (for video) each frame labelled with its time. */
+function mediaParts(attachment: Extract<LoadedAttachment, { kind: 'media' }>): ChatContentPart[] {
+  const { name, durationSeconds, transcript, frames } = attachment
+  const header = `name="${name}" duration="${formatTimestamp(durationSeconds)}"`
+  const transcriptPart: ChatContentPart = {
+    type: 'text',
+    text:
+      transcript === null
+        ? `<recording ${header}>\nThis video has no sound track.\n</recording>`
+        : `<transcript ${header}>\n${transcript || '(No speech was found in the recording.)'}\n</transcript>`
+  }
+  if (!frames.length) return [transcriptPart]
+  return [
+    transcriptPart,
+    { type: 'text', text: `${frames.length} frames from ${name}, evenly spaced through the video, in order:` },
+    ...frames.flatMap((frame): ChatContentPart[] => [
+      { type: 'text', text: `Frame at ${formatTimestamp(frame.seconds)}` },
+      { type: 'image_url', image_url: { url: frame.dataUrl } }
+    ])
+  ]
+}
+
+/**
+ * Turns a file into message parts: text files inline in `<file>` tags, images and PDFs as their own parts,
+ * audio and video as a transcript plus frames.
+ */
 function attachmentParts(attachment: LoadedAttachment): ChatContentPart[] {
   switch (attachment.kind) {
     case 'text':
@@ -40,6 +73,8 @@ function attachmentParts(attachment: LoadedAttachment): ChatContentPart[] {
       ]
     case 'pdf':
       return [{ type: 'file', file: { filename: attachment.name, file_data: attachment.dataUrl } }]
+    case 'media':
+      return mediaParts(attachment)
   }
 }
 

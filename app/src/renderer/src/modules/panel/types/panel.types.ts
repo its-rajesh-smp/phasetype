@@ -18,4 +18,6 @@ export interface ConversationTurn extends RunInput {
   output: string
   status: TurnStatus
   error: string | null
+  /** What's happening before the answer starts, e.g. "Transcribing call.mp4…". */
+  progress: string | null
 }

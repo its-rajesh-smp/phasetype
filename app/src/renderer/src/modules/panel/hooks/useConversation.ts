@@ -39,6 +39,10 @@ export function useConversation() {
           updateTurn(event.requestId, (turn) => ({ ...turn, output: turn.output + event.delta }))
           return
         }
+        if (event.type === 'status') {
+          updateTurn(event.requestId, (turn) => ({ ...turn, progress: event.message }))
+          return
+        }
         activeRequestRef.current = null
         updateTurn(event.requestId, (turn) =>
           event.type === 'done' ? { ...turn, status: 'done' } : { ...turn, status: 'error', error: event.message }
@@ -50,8 +54,8 @@ export function useConversation() {
   /** Starts the request for a turn, with the turns before it as history. */
   const request = (turn: ConversationTurn, history: ChatTurn[]): void => {
     activeRequestRef.current = turn.requestId
-    const { requestId, instruction, text, presetId, attachmentIds } = turn
-    bridge.ai.run({ requestId, instruction, text, presetId, attachmentIds, history })
+    const { requestId, instruction, label, text, presetId, attachmentIds } = turn
+    bridge.ai.run({ requestId, instruction, label, text, presetId, attachmentIds, history })
   }
 
   /** Stops the running request. A partial answer is kept; a turn with no answer yet is removed. */
@@ -70,7 +74,15 @@ export function useConversation() {
   /** Adds a prompt to the conversation and streams its answer. */
   const send = (input: RunInput): void => {
     cancel()
-    const turn: ConversationTurn = { ...input, id: createId(), requestId: createId(), output: '', status: 'streaming', error: null }
+    const turn: ConversationTurn = {
+      ...input,
+      id: createId(),
+      requestId: createId(),
+      output: '',
+      status: 'streaming',
+      error: null,
+      progress: null
+    }
     const history = toHistory(turnsRef.current)
     updateTurns((current) => [...current, turn])
     request(turn, history)
@@ -80,7 +92,7 @@ export function useConversation() {
   const regenerate = (): void => {
     const last = turnsRef.current.at(-1)
     if (!last || activeRequestRef.current) return
-    const turn: ConversationTurn = { ...last, requestId: createId(), output: '', status: 'streaming', error: null }
+    const turn: ConversationTurn = { ...last, requestId: createId(), output: '', status: 'streaming', error: null, progress: null }
     updateTurns((current) => [...current.slice(0, -1), turn])
     request(turn, toHistory(turnsRef.current.slice(0, -1)))
   }

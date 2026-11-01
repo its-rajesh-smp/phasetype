@@ -4,6 +4,7 @@ import { registerHotkeyIpc } from './hotkey.ipc'
 import { registerPanelIpc } from './panel.ipc'
 import { registerPermissionsIpc } from './permissions.ipc'
 import { registerSettingsIpc } from './settings.ipc'
+import { registerUsageIpc } from './usage.ipc'
 
 /** Registers every main-process IPC handler. Call once at startup. */
 export function registerIpcHandlers(): void {
@@ -13,4 +14,5 @@ export function registerIpcHandlers(): void {
   registerPermissionsIpc()
   registerPanelIpc()
   registerAppIpc()
+  registerUsageIpc()
 }

@@ -8,13 +8,13 @@
   "license": "UNLICENSED",
   "private": true,
   "scripts": {
-    "dev": "yarn build:helper && electron-vite dev --watch",
-    "build": "yarn build:helper && electron-vite build",
+    "dev": "yarn build:helpers && electron-vite dev --watch",
+    "build": "yarn build:helpers && electron-vite build",
     "preview": "electron-vite preview",
     "typecheck:node": "tsc --noEmit -p tsconfig.node.json",
     "typecheck:web": "tsc --noEmit -p tsconfig.web.json",
     "typecheck": "yarn typecheck:node && yarn typecheck:web",
-    "build:helper": "sh scripts/build-ax-helper.sh",
+    "build:helpers": "sh scripts/build-helpers.sh",
     "dist:mac": "yarn typecheck && yarn build && electron-builder --mac"
   },
   "devDependencies": {
