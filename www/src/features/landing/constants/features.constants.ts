@@ -1,36 +1,31 @@
 import {
   AppWindow,
+  BookmarkCheck,
+  ChartNoAxesColumn,
   ClipboardCheck,
   Keyboard,
   MessageSquareText,
   PenLine,
-  SlidersHorizontal,
-  Sparkles,
   SquareMenu
 } from 'lucide-react'
-import type { ActivityItem, Feature, HotkeyItem } from '../types/landing.types'
+import type { ActivityItem, Feature, HotkeyItem, PresetItem, UsageItem } from '../types/landing.types'
 
+/** Ordered so every row of the four-column bento is full: wide tiles span two columns. */
 export const FEATURES: Feature[] = [
   {
     icon: AppWindow,
     title: 'Works in every Mac app',
     description:
-      'Mail, Slack, Notion, Xcode, a form in your browser. PhaseType reads your selection with a plain ⌘C, so there is nothing to install per app.',
+      'Mail, Slack, Notion, Xcode, a form in your browser. PhaseType reads your selection through macOS Accessibility, so there is nothing to install per app.',
     tone: 'mint',
     wide: true,
     visual: 'activity'
   },
   {
-    icon: Sparkles,
-    title: 'Streams as it writes',
-    description: 'Words appear as the model writes them. Stop any time with esc.',
-    tone: 'violet'
-  },
-  {
     icon: MessageSquareText,
-    title: 'Refine in a loop',
-    description: 'Not quite right? Type another prompt and it applies to the result.',
-    tone: 'plain'
+    title: 'A conversation, not a one-shot',
+    description: 'Results stream in as they are written. Not quite right? Reply, and it refines with the whole thread in mind.',
+    tone: 'violet'
   },
   {
     icon: PenLine,
@@ -39,10 +34,24 @@ export const FEATURES: Feature[] = [
     tone: 'plain'
   },
   {
+    icon: BookmarkCheck,
+    title: 'Presets for every voice',
+    description: 'Save how you write a Slack reply or a client email, plus a few facts about you. Press ⌘P in the panel to apply one.',
+    tone: 'peach',
+    wide: true,
+    visual: 'presets'
+  },
+  {
     icon: ClipboardCheck,
     title: 'Your clipboard, untouched',
-    description: 'PhaseType borrows the clipboard to copy and paste, then puts back whatever was there.',
-    tone: 'peach'
+    description: 'Where apps allow it, PhaseType reads and replaces text directly. Elsewhere it borrows the clipboard and puts it back.',
+    tone: 'plain'
+  },
+  {
+    icon: SquareMenu,
+    title: 'Lives in the menu bar',
+    description: 'No dock icon, no window to manage. Optionally opens at login.',
+    tone: 'sky'
   },
   {
     icon: Keyboard,
@@ -53,18 +62,13 @@ export const FEATURES: Feature[] = [
     visual: 'hotkeys'
   },
   {
-    icon: SlidersHorizontal,
-    title: 'Your model, your voice',
-    description: 'Pick any chat model your key can use and set a system prompt that sounds like you.',
+    icon: ChartNoAxesColumn,
+    title: 'Any model, every cent counted',
+    description:
+      'Pick any chat model your key can use. Settings shows the tokens and estimated cost of each request, kept only on your Mac.',
     tone: 'violet',
-    wide: true
-  },
-  {
-    icon: SquareMenu,
-    title: 'Lives in the menu bar',
-    description: 'No dock icon, no window to manage. Optionally opens at login.',
-    tone: 'plain',
-    wide: true
+    wide: true,
+    visual: 'usage'
   }
 ]
 
@@ -77,6 +81,20 @@ export const ACTIVITY_ITEMS: ActivityItem[] = [
 
 /** Default shortcuts shown in the "hotkeys you choose" tile. */
 export const HOTKEY_ITEMS: HotkeyItem[] = [
-  { name: 'Open the panel', keys: ['⌃', '⌥', 'Space'] },
-  { name: 'Quick fix', keys: ['⌃', '⌥', 'F'] }
+  { name: 'Open the panel', keys: ['⌘', '⇧', 'Space'] },
+  { name: 'Quick fix', keys: ['⌥', '⇧', 'Space'] }
+]
+
+/** Presets shown in the preset picker tile. The first two ship with the app. */
+export const PRESET_ITEMS: PresetItem[] = [
+  { name: 'Slack reply', instructions: 'Short and casual, no greeting or sign-off', selected: true },
+  { name: 'Email reply', instructions: 'Clear and polite, with a greeting and sign-off' },
+  { name: 'Client update', instructions: 'Confident, plain words, lead with the outcome' }
+]
+
+/** Example rows for the usage tile, one per model. */
+export const USAGE_ITEMS: UsageItem[] = [
+  { model: 'gpt-5-mini', detail: '142 requests', cost: '$0.31' },
+  { model: 'gpt-4o-mini-transcribe', detail: '2 recordings', cost: '$0.18' },
+  { model: 'gpt-4.1', detail: '9 requests', cost: '$0.12' }
 ]

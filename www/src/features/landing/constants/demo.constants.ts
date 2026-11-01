@@ -11,7 +11,7 @@ export const DEMO_EMAIL = {
     "Hi Maya, I'm so sorry, but I can't make Thursday's launch sync because it clashes with a client call. Could we move it to Friday morning instead? Let me know what works for you!"
 } as const
 
-export const DEMO_HOTKEY = ['⌃', '⌥', 'Space'] as const
+export const DEMO_HOTKEY = ['⌘', '⇧', 'Space'] as const
 
 export const DEMO_STAGES: DemoStage[] = [
   { id: 'draft', holdMs: 1600 },

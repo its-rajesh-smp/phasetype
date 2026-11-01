@@ -24,6 +24,11 @@ export function ExampleCard({ example }: { example: WritingExample }) {
       <div className="flex items-center justify-center">
         <div className="flex flex-col items-center gap-2.5 rounded-2xl border border-line bg-surface px-4 py-3.5 shadow-card">
           <KeyCombo keys={example.keys} />
+          {example.preset && (
+            <p className="rounded-full border border-peach-edge bg-peach-tint px-2.5 py-0.5 text-[11px] font-semibold text-peach-ink">
+              Preset · {example.preset}
+            </p>
+          )}
           <p className="flex max-w-44 items-start gap-1.5 text-center text-[13px] font-semibold text-ink">
             <WandSparkles aria-hidden className="mt-0.5 size-3.5 shrink-0 text-violet-ink" />
             {example.prompt}

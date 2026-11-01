@@ -7,6 +7,7 @@ import { ExamplesSection } from '@/features/landing/components/sections/Examples
 import { FaqSection } from '@/features/landing/components/sections/FaqSection'
 import { HeroLandscape } from '@/features/landing/components/ui/HeroLandscape'
 import { FeaturesSection } from '@/features/landing/components/sections/FeaturesSection'
+import { FilesSection } from '@/features/landing/components/sections/FilesSection'
 import { HeroSection } from '@/features/landing/components/sections/HeroSection'
 import { HowItWorksSection } from '@/features/landing/components/sections/HowItWorksSection'
 import { ModesSection } from '@/features/landing/components/sections/ModesSection'
@@ -31,6 +32,7 @@ export default function HomePage() {
           <AppsMarquee />
           <HowItWorksSection />
           <ModesSection />
+          <FilesSection />
           <ExamplesSection />
           <FeaturesSection />
           <PrivacySection />

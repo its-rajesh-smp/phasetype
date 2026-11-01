@@ -11,7 +11,7 @@ export interface Step {
 
 export type CardTone = 'violet' | 'sky' | 'peach' | 'mint' | 'plain'
 
-export type FeatureVisualId = 'activity' | 'hotkeys'
+export type FeatureVisualId = 'activity' | 'hotkeys' | 'presets' | 'usage'
 
 export interface Feature {
   icon: LucideIcon
@@ -34,6 +34,32 @@ export interface HotkeyItem {
   keys: readonly string[]
 }
 
+export interface PresetItem {
+  name: string
+  instructions: string
+  selected?: boolean
+}
+
+export interface UsageItem {
+  model: string
+  detail: string
+  cost: string
+}
+
+export interface FileKind {
+  icon: LucideIcon
+  name: string
+  formats: string
+  tone: CardTone
+}
+
+export interface DemoAttachment {
+  name: string
+  /** Page count or length, shown under the name. */
+  detail: string
+  kind: 'document' | 'audio'
+}
+
 export interface Fact {
   value: string
   label: string
@@ -49,6 +75,8 @@ export interface WritingExample {
   label: string
   app: string
   keys: readonly string[]
+  /** The saved preset applied on top of the prompt, if any. */
+  preset?: string
   prompt: string
   /** Null when nothing was selected and PhaseType writes from scratch. */
   before: string | null

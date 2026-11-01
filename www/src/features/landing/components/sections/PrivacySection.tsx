@@ -16,7 +16,7 @@ export function PrivacySection() {
               Your key. Your Mac. Your words.
             </h2>
             <p className="max-w-md text-lg leading-relaxed text-ink-soft">
-              No account, no PhaseType cloud, no copy of your text sitting on someone else&apos;s server.
+              No account, no PhaseType cloud, no copy of your text or files sitting on someone else&apos;s server.
             </p>
           </div>
         </div>

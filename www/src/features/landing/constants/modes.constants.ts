@@ -4,16 +4,16 @@ export const WRITING_MODES: WritingMode[] = [
   {
     id: 'panel',
     name: 'The panel',
-    keys: ['⌃', '⌥', 'Space'],
+    keys: ['⌘', '⇧', 'Space'],
     titleAccent: 'Ask',
     title: 'for anything',
     description: 'A floating panel opens over whatever you are writing in. Type an instruction and watch the result stream in.',
-    points: ['Refine the result with a follow-up prompt', 'Paste with ⌘↵ or copy with ⇧⌘C', 'Nothing selected? It writes at your cursor']
+    points: ['Keep the conversation going to refine the result', 'Pick a saved preset with ⌘P', 'Paste with ⌘↵ or copy with ⇧⌘C']
   },
   {
     id: 'quick-fix',
     name: 'Quick fix',
-    keys: ['⌃', '⌥', 'F'],
+    keys: ['⌥', '⇧', 'Space'],
     titleAccent: 'Fix it',
     title: 'in place',
     description: 'One hotkey fixes spelling, grammar and punctuation, then pastes it back. No panel, no clicks.',

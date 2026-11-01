@@ -1,14 +1,18 @@
 import { Container } from '@/components/ui/Container'
 import { SectionHeading } from '@/components/ui/SectionHeading'
-import { ACTIVITY_ITEMS, FEATURES, HOTKEY_ITEMS } from '../../constants/features.constants'
+import { ACTIVITY_ITEMS, FEATURES, HOTKEY_ITEMS, PRESET_ITEMS, USAGE_ITEMS } from '../../constants/features.constants'
 import type { FeatureVisualId } from '../../types/landing.types'
 import { ActivityFeed } from '../ui/ActivityFeed'
 import { FeatureCard } from '../ui/FeatureCard'
 import { HotkeyList } from '../ui/HotkeyList'
+import { PresetList } from '../ui/PresetList'
+import { UsageList } from '../ui/UsageList'
 
 const FEATURE_VISUALS: Record<FeatureVisualId, React.ReactNode> = {
   activity: <ActivityFeed items={ACTIVITY_ITEMS} />,
-  hotkeys: <HotkeyList items={HOTKEY_ITEMS} />
+  hotkeys: <HotkeyList items={HOTKEY_ITEMS} />,
+  presets: <PresetList items={PRESET_ITEMS} />,
+  usage: <UsageList items={USAGE_ITEMS} />
 }
 
 /** Pastel bento grid of features. */

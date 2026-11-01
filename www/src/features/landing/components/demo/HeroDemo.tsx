@@ -36,7 +36,7 @@ export function HeroDemo() {
       <figcaption className="flex flex-col items-center gap-3">
         <DemoStepTracker stage={scene.stage} />
         <span className="sr-only">
-          Demo: a rough email draft in Mail is selected, PhaseType is opened with Control Option Space, asked to “
+          Demo: a rough email draft in Mail is selected, PhaseType is opened with Command Shift Space, asked to “
           {DEMO_EMAIL.prompt}”, and the polished result is pasted back over the draft.
         </span>
       </figcaption>

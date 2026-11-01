@@ -17,6 +17,7 @@ export const FOOTER_LINK_GROUPS: FooterLinkGroup[] = [
     title: 'Product',
     links: [
       { label: 'How it works', href: '#how-it-works' },
+      { label: 'Files', href: '#files' },
       { label: 'Examples', href: '#examples' },
       { label: 'Features', href: '#features' }
     ]
