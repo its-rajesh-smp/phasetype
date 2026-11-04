@@ -64,7 +64,8 @@ export const viewport: Viewport = {
 export default function RootLayout({ children }: LayoutProps<'/'>) {
   return (
     <html lang="en" className={inter.variable}>
-      <body>{children}</body>
+      {/* Extensions (e.g. ones that set body styles) edit <body> before React loads; ignore those attribute diffs. */}
+      <body suppressHydrationWarning>{children}</body>
     </html>
   )
 }

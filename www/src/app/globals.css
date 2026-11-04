@@ -155,13 +155,15 @@
 }
 
 @layer components {
-  /* Sections fade up as they scroll into view, where the browser supports scroll-driven animations. */
+  /* Sections fade up as they scroll into view, where the browser supports scroll-driven animations.
+     The range ends after a fixed scroll distance, not a share of the section's height, so opening an FAQ answer
+     (which makes the section taller) can't send it back mid-fade. */
   @media (prefers-reduced-motion: no-preference) {
     @supports (animation-timeline: view()) {
       .reveal {
         animation: rise linear both;
         animation-timeline: view();
-        animation-range: entry 0% entry 40%;
+        animation-range: entry 0% entry 240px;
       }
     }
   }

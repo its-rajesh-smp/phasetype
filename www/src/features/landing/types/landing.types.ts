@@ -1,4 +1,5 @@
 import type { LucideIcon } from 'lucide-react'
+import type { StaticImageData } from 'next/image'
 
 export type StepIllustrationId = 'select' | 'press' | 'paste'
 
@@ -20,6 +21,8 @@ export interface Feature {
   tone: CardTone
   wide?: boolean
   visual?: FeatureVisualId
+  /** Nature scene filling the bottom of a plain tile; the text sits on a white fade above it. */
+  image?: StaticImageData
 }
 
 export interface ActivityItem {
@@ -58,11 +61,6 @@ export interface DemoAttachment {
   /** Page count or length, shown under the name. */
   detail: string
   kind: 'document' | 'audio'
-}
-
-export interface Fact {
-  value: string
-  label: string
 }
 
 export interface FaqEntry {

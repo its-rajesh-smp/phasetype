@@ -1,6 +1,7 @@
 'use client'
 
 import { Download } from 'lucide-react'
+import { usePathname } from 'next/navigation'
 import { ButtonLink } from '@/components/ui/ButtonLink'
 import { Logo } from '@/components/ui/Logo'
 import { PRIMARY_DOWNLOAD } from '@/constants/download.constants'
@@ -10,10 +11,11 @@ import { useScrolled } from '@/hooks/useScrolled'
 import { cn } from '@/utils/cn.util'
 import { NavLinks } from './NavLinks'
 
-/** The floating pill nav. Tracks the section in view and firms up its shadow once the page scrolls. */
+/** The floating pill nav. On the home page it tracks the section in view and firms up its shadow once the page scrolls. */
 export function HeaderNav() {
   const scrolled = useScrolled()
   const activeId = useActiveSection(NAV_SECTION_IDS)
+  const isHome = usePathname() === '/'
 
   return (
     <nav
@@ -26,7 +28,7 @@ export function HeaderNav() {
       <a href={HOME_LINK.href} aria-label="PhaseType home" className="flex items-center rounded-lg">
         <Logo />
       </a>
-      <NavLinks activeHref={activeId ? `#${activeId}` : HOME_LINK.href} />
+      <NavLinks activeHref={isHome ? (activeId ? `/#${activeId}` : HOME_LINK.href) : undefined} />
       <ButtonLink href={PRIMARY_DOWNLOAD.href} size="sm" leadingIcon={<Download aria-hidden className="size-3.5" />}>
         Download
       </ButtonLink>

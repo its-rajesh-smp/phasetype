@@ -16,7 +16,7 @@ export function SiteFooter() {
               {SITE.tagline} An AI writing assistant that lives in your Mac&apos;s menu bar.
             </p>
           </div>
-          <div className="grid grid-cols-2 gap-16">
+          <div className="grid grid-cols-2 gap-x-16 gap-y-10 sm:grid-cols-3">
             {FOOTER_LINK_GROUPS.map((group) => (
               <FooterColumn key={group.title} group={group} />
             ))}

@@ -1,3 +1,5 @@
+import featureClipboard from '@/assets/images/feature-clipboard.webp'
+import featureWrite from '@/assets/images/feature-write.webp'
 import {
   AppWindow,
   BookmarkCheck,
@@ -31,7 +33,8 @@ export const FEATURES: Feature[] = [
     icon: PenLine,
     title: 'Writes from nothing',
     description: 'With nothing selected, describe what you need and it pastes at your cursor.',
-    tone: 'plain'
+    tone: 'plain',
+    image: featureWrite
   },
   {
     icon: BookmarkCheck,
@@ -45,7 +48,8 @@ export const FEATURES: Feature[] = [
     icon: ClipboardCheck,
     title: 'Your clipboard, untouched',
     description: 'Where apps allow it, PhaseType reads and replaces text directly. Elsewhere it borrows the clipboard and puts it back.',
-    tone: 'plain'
+    tone: 'plain',
+    image: featureClipboard
   },
   {
     icon: SquareMenu,
