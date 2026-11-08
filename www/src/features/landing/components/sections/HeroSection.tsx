@@ -1,10 +1,11 @@
 import { Container } from '@/components/ui/Container'
 import { Marker } from '@/components/ui/Marker'
 import { DOWNLOAD_OPTIONS } from '@/constants/download.constants'
+import { TRY_LINK } from '@/constants/navigation.constants'
 import { HeroDemo } from '../demo/HeroDemo'
 import { DownloadButtons } from '../ui/DownloadButtons'
 
-/** Headline, download button and the looping product demo. Holds the page's only h1. */
+/** Headline, download and try buttons, and the looping product demo. Holds the page's only h1. */
 export function HeroSection() {
   return (
     <section aria-labelledby="hero-title" className="pt-20 pb-20 sm:pt-28">
@@ -21,7 +22,12 @@ export function HeroSection() {
             Select text in any app, press a hotkey, and PhaseType rewrites it in place.
           </p>
 
-          <DownloadButtons options={DOWNLOAD_OPTIONS} showDetails={false} className="mt-2" />
+          <DownloadButtons
+            options={DOWNLOAD_OPTIONS}
+            secondary={{ label: 'Try it in your browser', href: TRY_LINK.href }}
+            showDetails={false}
+            className="mt-2"
+          />
         </div>
 
         <div className="w-full animate-rise [animation-delay:150ms]">

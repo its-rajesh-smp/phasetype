@@ -3,6 +3,9 @@ import type { FooterLinkGroup, NavLink } from '@/types/navigation.types'
 /** Root-relative links so the nav and footer also work from the legal pages. */
 export const HOME_LINK: NavLink = { label: 'Home', href: '/#top' }
 
+/** The in-browser playground, for visitors who want to try PhaseType before downloading. */
+export const TRY_LINK: NavLink = { label: 'Try now', href: '/try' }
+
 export const NAV_LINKS: NavLink[] = [
   { label: 'How it works', href: '/#how-it-works' },
   { label: 'Features', href: '/#features' },
@@ -21,6 +24,7 @@ export const FOOTER_LINK_GROUPS: FooterLinkGroup[] = [
   {
     title: 'Product',
     links: [
+      TRY_LINK,
       { label: 'How it works', href: '/#how-it-works' },
       { label: 'Files', href: '/#files' },
       { label: 'Examples', href: '/#examples' },

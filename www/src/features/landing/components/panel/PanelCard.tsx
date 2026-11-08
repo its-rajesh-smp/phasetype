@@ -1,9 +1,17 @@
 import { Settings2 } from 'lucide-react'
+import type { ReactNode } from 'react'
 import { LogoMark } from '@/components/ui/LogoMark'
 import { cn } from '@/utils/cn.util'
 
+interface PanelCardProps {
+  children: ReactNode
+  /** Replaces the decorative settings icon in the header, e.g. with a close button. */
+  action?: ReactNode
+  className?: string
+}
+
 /** The floating PhaseType panel: rounded card with the small logo header. */
-export function PanelCard({ children, className }: { children: React.ReactNode; className?: string }) {
+export function PanelCard({ children, action, className }: PanelCardProps) {
   return (
     <div
       className={cn(
@@ -13,7 +21,7 @@ export function PanelCard({ children, className }: { children: React.ReactNode; 
     >
       <div className="flex h-10 shrink-0 items-center justify-between px-4">
         <LogoMark className="size-6" />
-        <Settings2 aria-hidden className="size-4 text-subtle" />
+        {action ?? <Settings2 aria-hidden className="size-4 text-subtle" />}
       </div>
       {children}
     </div>

@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { ButtonLink } from '@/components/ui/ButtonLink'
 import { Logo } from '@/components/ui/Logo'
 import { PRIMARY_DOWNLOAD } from '@/constants/download.constants'
-import { HOME_LINK, NAV_SECTION_IDS } from '@/constants/navigation.constants'
+import { HOME_LINK, NAV_SECTION_IDS, TRY_LINK } from '@/constants/navigation.constants'
 import { useActiveSection } from '@/hooks/useActiveSection'
 import { useScrolled } from '@/hooks/useScrolled'
 import { cn } from '@/utils/cn.util'
@@ -15,7 +15,8 @@ import { NavLinks } from './NavLinks'
 export function HeaderNav() {
   const scrolled = useScrolled()
   const activeId = useActiveSection(NAV_SECTION_IDS)
-  const isHome = usePathname() === '/'
+  const pathname = usePathname()
+  const isHome = pathname === '/'
 
   return (
     <nav
@@ -29,9 +30,16 @@ export function HeaderNav() {
         <Logo />
       </a>
       <NavLinks activeHref={isHome ? (activeId ? `/#${activeId}` : HOME_LINK.href) : undefined} />
-      <ButtonLink href={PRIMARY_DOWNLOAD.href} size="sm" leadingIcon={<Download aria-hidden className="size-3.5" />}>
-        Download
-      </ButtonLink>
+      <div className="flex items-center gap-1.5">
+        {pathname !== TRY_LINK.href && (
+          <ButtonLink href={TRY_LINK.href} variant="secondary" size="sm" className="hidden shadow-none sm:inline-flex">
+            {TRY_LINK.label}
+          </ButtonLink>
+        )}
+        <ButtonLink href={PRIMARY_DOWNLOAD.href} size="sm" leadingIcon={<Download aria-hidden className="size-3.5" />}>
+          Download
+        </ButtonLink>
+      </div>
     </nav>
   )
 }

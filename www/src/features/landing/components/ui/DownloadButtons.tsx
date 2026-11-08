@@ -1,4 +1,4 @@
-import { ArrowDown, Download } from 'lucide-react'
+import { ArrowRight, Download } from 'lucide-react'
 import { ButtonLink } from '@/components/ui/ButtonLink'
 import type { DownloadOption } from '@/types/download.types'
 import { cn } from '@/utils/cn.util'
@@ -31,7 +31,7 @@ export function DownloadButtons({ options, secondary, showDetails = true, classN
             href={secondary.href}
             variant="accent"
             size="lg"
-            trailingIcon={<ArrowDown aria-hidden className="size-4 transition-transform group-hover:translate-y-0.5" />}
+            trailingIcon={<ArrowRight aria-hidden className="size-4 transition-transform group-hover:translate-x-0.5" />}
           >
             {secondary.label}
           </ButtonLink>
