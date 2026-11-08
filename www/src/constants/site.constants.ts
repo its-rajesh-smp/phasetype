@@ -21,6 +21,10 @@ export const SITE = {
     'PhaseType'
   ],
   author: 'Rajesh Mahapatra',
+  /** Shown in the footer credit, linking to the portfolio. */
+  authorShortName: 'Rajesh',
+  authorUrl: 'https://itsrajeshsmp.online/?utm_source=phasetype',
+  githubUrl: 'https://github.com/its-rajesh-smp',
   version: '0.1.0',
   locale: 'en_US',
   category: 'productivity',

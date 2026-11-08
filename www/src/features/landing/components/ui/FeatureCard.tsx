@@ -16,7 +16,7 @@ export function FeatureCard({ feature, visual }: FeatureCardProps) {
   return (
     <li
       className={cn(
-        'relative flex flex-col gap-6 overflow-hidden rounded-[28px] border p-6 sm:p-7',
+        'group relative flex flex-col gap-6 overflow-hidden rounded-[28px] border p-6 transition duration-300 ease-out hover:-translate-y-1 hover:shadow-float sm:p-7',
         tone.card,
         feature.image && 'min-h-[440px]',
         feature.wide && 'lg:col-span-2',
@@ -31,13 +31,16 @@ export function FeatureCard({ feature, visual }: FeatureCardProps) {
             fill
             placeholder="blur"
             sizes="(min-width: 1024px) 290px, (min-width: 640px) 50vw, 100vw"
-            className="object-cover object-bottom"
+            className="object-cover object-bottom transition-transform duration-[1200ms] ease-out group-hover:scale-105"
           />
           <div className="absolute inset-x-0 top-0 h-2/3 bg-linear-to-b from-surface via-surface/90 to-transparent" />
         </div>
       )}
       <div className="relative flex flex-col gap-4">
-        <IconBadge icon={feature.icon} />
+        <IconBadge
+          icon={feature.icon}
+          className="transition-transform duration-300 ease-out group-hover:-translate-y-0.5 group-hover:-rotate-6 group-hover:scale-110"
+        />
         <div className="flex flex-col gap-2">
           <h3 className={cn('text-2xl leading-tight font-medium tracking-[-0.04em]', tone.title)}>{feature.title}</h3>
           <p className="text-[15px] leading-relaxed text-muted">{feature.description}</p>

@@ -148,6 +148,12 @@
     font-feature-settings: 'cv11', 'ss01';
   }
 
+  /* Tailwind v4 no longer gives buttons a pointer cursor. */
+  button:not(:disabled),
+  [role='button']:not([aria-disabled='true']) {
+    cursor: pointer;
+  }
+
   ::selection {
     background: var(--color-lime);
     color: var(--color-ink);

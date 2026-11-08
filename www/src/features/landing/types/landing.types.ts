@@ -12,7 +12,7 @@ export interface Step {
 
 export type CardTone = 'violet' | 'sky' | 'peach' | 'mint' | 'plain'
 
-export type FeatureVisualId = 'activity' | 'hotkeys' | 'presets' | 'usage'
+export type FeatureVisualId = 'activity' | 'thread' | 'hotkeys' | 'presets' | 'usage'
 
 export interface Feature {
   icon: LucideIcon
@@ -29,7 +29,17 @@ export interface ActivityItem {
   app: string
   action: string
   detail: string
-  time: string
+}
+
+export interface ThreadMessage {
+  from: 'you' | 'phasetype'
+  text: string
+}
+
+/** A shortcut that macOS or a common app already owns. */
+export interface TakenHotkey {
+  keys: readonly string[]
+  owner: string
 }
 
 export interface HotkeyItem {
@@ -40,13 +50,13 @@ export interface HotkeyItem {
 export interface PresetItem {
   name: string
   instructions: string
-  selected?: boolean
 }
 
 export interface UsageItem {
   model: string
   detail: string
-  cost: string
+  /** Estimated cost in US dollars. */
+  cost: number
 }
 
 export interface FileKind {
