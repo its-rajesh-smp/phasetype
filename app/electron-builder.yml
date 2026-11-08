@@ -17,8 +17,11 @@ mac:
   icon: assets/icon/icon.icns
   # Ad-hoc signature: free, no Apple account. Replace with a "Developer ID Application" identity to distribute publicly.
   identity: "-"
+  # dmg for the download page, zip for install.sh. Names have no version so ".../releases/latest/download/<name>" always works.
   target:
     - target: dmg
+      arch: [arm64, x64]
+    - target: zip
       arch: [arm64, x64]
   extendInfo:
     LSUIElement: true
@@ -27,8 +30,10 @@ mac:
   entitlements: build/entitlements.mac.plist
   entitlementsInherit: build/entitlements.mac.plist
   notarize: false
+zip:
+  artifactName: ${productName}-${arch}.${ext}
 dmg:
-  artifactName: ${productName}-${version}-${arch}.${ext}
+  artifactName: ${productName}-${arch}.${ext}
   title: ${productName}
   # Drawn by scripts/dmg-background.py (background@2x.png is picked up for Retina). Keep the sizes and positions in sync with it.
   background: build/background.png
@@ -44,3 +49,9 @@ dmg:
       y: 220
       type: link
       path: /Applications
+# `yarn release:mac` uploads the files to a draft GitHub release tagged v<version>. Write the notes there, then publish.
+publish:
+  provider: github
+  owner: its-rajesh-smp
+  repo: phasetype
+  releaseType: draft

@@ -1,7 +1,10 @@
 import type { AppSettings } from '@shared/types'
 
 export interface StoredSettings extends AppSettings {
-  /** Base64 of the safeStorage-encrypted key, or the plain key when encryption is unavailable. */
-  apiKey: string | null
-  apiKeyEncrypted: boolean
+  /**
+   * Legacy: older versions kept the key here (base64 safeStorage ciphertext, or plain text when encryption was
+   * unavailable). It now lives in the keychain; these are only read once to move an existing key over.
+   */
+  apiKey?: string | null
+  apiKeyEncrypted?: boolean
 }

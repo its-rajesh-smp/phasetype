@@ -50,7 +50,7 @@ export function SiteFooter() {
 
         <p
           aria-hidden
-          className="-mb-8 bg-linear-to-b from-line-strong to-transparent bg-clip-text text-center text-[19vw] leading-[0.8] font-semibold tracking-[-0.06em] text-transparent select-none lg:text-[230px]"
+          className="bg-linear-to-b from-line-strong via-line-strong/70 to-transparent bg-clip-text pb-[0.04em] text-center text-[19vw] leading-none font-semibold tracking-[-0.06em] text-transparent select-none lg:text-[230px]"
         >
           phasetype
         </p>

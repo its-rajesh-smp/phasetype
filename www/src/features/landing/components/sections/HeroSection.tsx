@@ -1,6 +1,5 @@
 import { Container } from '@/components/ui/Container'
 import { Marker } from '@/components/ui/Marker'
-import { DOWNLOAD_OPTIONS } from '@/constants/download.constants'
 import { TRY_LINK } from '@/constants/navigation.constants'
 import { HeroDemo } from '../demo/HeroDemo'
 import { DownloadButtons } from '../ui/DownloadButtons'
@@ -23,7 +22,6 @@ export function HeroSection() {
           </p>
 
           <DownloadButtons
-            options={DOWNLOAD_OPTIONS}
             secondary={{ label: 'Try it in your browser', href: TRY_LINK.href }}
             showDetails={false}
             className="mt-2"

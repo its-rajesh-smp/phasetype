@@ -74,7 +74,11 @@ export function updateSettings(patch: SettingsUpdate): Result<PublicSettings> {
   if (patch.apiKey !== undefined) {
     const apiKey = patch.apiKey.trim()
     if (!apiKey) return { ok: false, error: 'The API key cannot be empty.' }
-    settingsStore.setApiKey(apiKey)
+    try {
+      settingsStore.setApiKey(apiKey)
+    } catch (error) {
+      return { ok: false, error: error instanceof Error ? error.message : 'Could not save the API key.' }
+    }
   }
 
   if (changes.launchAtLogin !== undefined) loginItemService.set(changes.launchAtLogin)

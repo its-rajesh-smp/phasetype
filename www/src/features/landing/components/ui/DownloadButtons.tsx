@@ -1,30 +1,26 @@
 import { ArrowRight, Download } from 'lucide-react'
 import { ButtonLink } from '@/components/ui/ButtonLink'
-import type { DownloadOption } from '@/types/download.types'
+import { PRIMARY_DOWNLOAD } from '@/constants/download.constants'
 import { cn } from '@/utils/cn.util'
 
 interface DownloadButtonsProps {
-  options: DownloadOption[]
   secondary?: { label: string; href: string }
-  /** Show the platform line and the link for the other Mac architecture. */
+  /** Show the platform line under the buttons. */
   showDetails?: boolean
   className?: string
 }
 
-/** Primary download button, an optional lime secondary action, and a link for the other Mac architecture. */
-export function DownloadButtons({ options, secondary, showDetails = true, className }: DownloadButtonsProps) {
-  const [primary, ...others] = options
-
+/** Download button (to the download page), an optional lime secondary action, and the platform line. */
+export function DownloadButtons({ secondary, showDetails = true, className }: DownloadButtonsProps) {
   return (
     <div className={cn('flex flex-col items-center gap-4', className)}>
       <div className="flex flex-wrap items-center justify-center gap-3">
         <ButtonLink
-          href={primary.href}
+          href={PRIMARY_DOWNLOAD.href}
           size="lg"
-          aria-label={`${primary.label}, ${primary.detail}`}
           leadingIcon={<Download aria-hidden className="size-4 transition-transform group-hover:translate-y-0.5" />}
         >
-          {primary.label}
+          {PRIMARY_DOWNLOAD.label}
         </ButtonLink>
         {secondary && (
           <ButtonLink
@@ -37,19 +33,7 @@ export function DownloadButtons({ options, secondary, showDetails = true, classN
           </ButtonLink>
         )}
       </div>
-      {showDetails && (
-        <p className="text-sm text-muted">
-          macOS · {primary.detail}
-          {others.map((option) => (
-            <span key={option.arch}>
-              {' · '}
-              <a href={option.href} className="font-medium text-ink underline decoration-line-strong underline-offset-4 hover:decoration-ink">
-                Download for {option.label}
-              </a>
-            </span>
-          ))}
-        </p>
-      )}
+      {showDetails && <p className="text-sm text-muted">Free · macOS · Apple Silicon and Intel</p>}
     </div>
   )
 }

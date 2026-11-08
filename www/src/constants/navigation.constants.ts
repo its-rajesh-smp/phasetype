@@ -6,6 +6,9 @@ export const HOME_LINK: NavLink = { label: 'Home', href: '/#top' }
 /** The in-browser playground, for visitors who want to try PhaseType before downloading. */
 export const TRY_LINK: NavLink = { label: 'Try now', href: '/try' }
 
+/** Install options, the one-time macOS approval and every version's notes. */
+export const DOWNLOAD_LINK: NavLink = { label: 'Download', href: '/download' }
+
 export const NAV_LINKS: NavLink[] = [
   { label: 'How it works', href: '/#how-it-works' },
   { label: 'Features', href: '/#features' },
@@ -24,6 +27,7 @@ export const FOOTER_LINK_GROUPS: FooterLinkGroup[] = [
   {
     title: 'Product',
     links: [
+      DOWNLOAD_LINK,
       TRY_LINK,
       { label: 'How it works', href: '/#how-it-works' },
       { label: 'Files', href: '/#files' },
@@ -35,7 +39,8 @@ export const FOOTER_LINK_GROUPS: FooterLinkGroup[] = [
     title: 'Trust',
     links: [
       { label: 'Privacy', href: '/#privacy' },
-      { label: 'FAQ', href: '/#faq' }
+      { label: 'FAQ', href: '/#faq' },
+      { label: 'Changelog', href: `${DOWNLOAD_LINK.href}#releases` }
     ]
   },
   {

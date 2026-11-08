@@ -1,7 +1,7 @@
 export const SITE = {
   name: 'PhaseType',
-  domain: 'phasetype.ink',
-  url: 'https://phasetype.ink',
+  domain: 'phasetype.online',
+  url: 'https://phasetype.online',
   title: 'PhaseType: fix and rewrite any text on your Mac with one hotkey',
   tagline: 'Better words, right where you type.',
   description:

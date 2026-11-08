@@ -6,8 +6,9 @@ import type { AppSettings, PublicSettings } from '@shared/types'
 import { SETTINGS_FILE_NAME } from '../constants'
 import { toApiKeyHint } from '../helpers'
 import type { StoredSettings } from '../types'
+import { keychainService } from './keychain.service'
 
-const EMPTY_STORE: StoredSettings = { ...DEFAULT_SETTINGS, apiKey: null, apiKeyEncrypted: false }
+const EMPTY_STORE: StoredSettings = { ...DEFAULT_SETTINGS }
 
 let cache: StoredSettings | null = null
 
@@ -40,27 +41,56 @@ function write(next: StoredSettings): void {
   cache = next
 }
 
-/** Returns the saved API key, decrypting it if needed. Returns null if none is saved or decryption fails. */
-function getApiKey(): string | null {
+/** In-memory copy of the key so each request doesn't spawn `security`. `undefined` = not loaded yet. */
+let apiKeyCache: string | null | undefined
+
+/**
+ * Reads a key saved by older versions in settings.json (safeStorage-encrypted or plain), or null.
+ * Decrypting it is the one time older installs may still see the keychain password prompt.
+ */
+function readLegacyApiKey(): string | null {
   const { apiKey, apiKeyEncrypted } = read()
   if (!apiKey) return null
   if (!apiKeyEncrypted) return apiKey
   try {
     return safeStorage.decryptString(Buffer.from(apiKey, 'base64'))
   } catch (error) {
-    console.error('[settings] Could not decrypt the API key.', error)
+    console.error('[settings] Could not decrypt the old API key.', error)
     return null
   }
 }
 
-/** Saves the API key, encrypted with the OS keychain when available, plain text otherwise. */
+/** Removes the old API key fields from settings.json. */
+function clearLegacyApiKey(): void {
+  const { apiKey, apiKeyEncrypted, ...rest } = read()
+  if (apiKey !== undefined || apiKeyEncrypted !== undefined) write(rest)
+}
+
+/** Returns the saved API key from the keychain, moving over a key saved by older versions if needed. Null if none. */
+function getApiKey(): string | null {
+  if (apiKeyCache !== undefined) return apiKeyCache
+  let apiKey = keychainService.get()
+  if (!apiKey) {
+    const legacy = readLegacyApiKey()
+    if (legacy) {
+      try {
+        keychainService.set(legacy)
+        clearLegacyApiKey()
+      } catch (error) {
+        console.error('[settings] Could not move the API key to the keychain.', error)
+      }
+      apiKey = legacy
+    }
+  }
+  apiKeyCache = apiKey
+  return apiKey
+}
+
+/** Saves the API key to the keychain. Throws if it cannot be saved. */
 function setApiKey(apiKey: string): void {
-  const canEncrypt = safeStorage.isEncryptionAvailable()
-  write({
-    ...read(),
-    apiKey: canEncrypt ? safeStorage.encryptString(apiKey).toString('base64') : apiKey,
-    apiKeyEncrypted: canEncrypt
-  })
+  keychainService.set(apiKey)
+  apiKeyCache = apiKey
+  clearLegacyApiKey()
 }
 
 /** Returns the app settings without the API key fields. */
@@ -80,5 +110,5 @@ function updateSettings(patch: Partial<AppSettings>): void {
   write({ ...read(), ...patch })
 }
 
-/** Reads and writes the app settings and the (encrypted) API key on disk. */
+/** Reads and writes the app settings on disk and the API key in the keychain. */
 export const settingsStore = { getSettings, getPublicSettings, updateSettings, getApiKey, setApiKey }

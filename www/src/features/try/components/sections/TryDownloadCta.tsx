@@ -1,5 +1,4 @@
 import { Container } from '@/components/ui/Container'
-import { DOWNLOAD_OPTIONS } from '@/constants/download.constants'
 import { DownloadButtons } from '@/features/landing/components/ui/DownloadButtons'
 
 /** After trying: the pitch for the real app, which works in every app instead of one text box. */
@@ -13,7 +12,7 @@ export function TryDownloadCta() {
         <p className="max-w-xl text-lg leading-relaxed text-pretty text-muted">
           The app works in Mail, Slack, Notes and anywhere else you type, and pastes the result straight back over your selection.
         </p>
-        <DownloadButtons options={DOWNLOAD_OPTIONS} className="mt-2" />
+        <DownloadButtons className="mt-2" />
       </Container>
     </section>
   )

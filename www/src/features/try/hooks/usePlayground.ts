@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useRef } from 'react'
 import type { PanelCapture } from '../types/try.types'
-import { useCopyFeedback } from './useCopyFeedback'
+import { useCopyFeedback } from '@/hooks/useCopyFeedback'
 import { useEditor } from './useEditor'
 import { usePanelHotkeys } from './usePanelHotkeys'
 import { usePanelSession } from './usePanelSession'
