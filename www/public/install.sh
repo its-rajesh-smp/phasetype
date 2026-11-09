@@ -1,8 +1,8 @@
 #!/bin/sh
-# PhaseType installer — https://phasetype.online/install.sh
+# PhaseType installer — https://phasetype.vercel.app/install.sh
 #
-#   curl -fsSL https://phasetype.online/install.sh | sh                 # latest version
-#   curl -fsSL https://phasetype.online/install.sh | sh -s -- 0.2.0     # a specific version
+#   curl -fsSL https://phasetype.vercel.app/install.sh | sh                 # latest version
+#   curl -fsSL https://phasetype.vercel.app/install.sh | sh -s -- 0.2.0     # a specific version
 #
 # Downloads PhaseType from GitHub Releases, installs it to /Applications and opens it.
 # Run it again to update: your settings and API key are stored outside the app and are kept.

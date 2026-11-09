@@ -36,9 +36,20 @@ jobs:
 
       - run: yarn install --frozen-lockfile
 
-      # Builds both architectures and uploads the .dmg and .zip files. The app is ad-hoc signed (identity "-").
-      - name: Build and publish
-        run: yarn release:mac -c.publish.releaseType=release
+      # Builds both architectures into dist/. The app is ad-hoc signed (identity "-").
+      - name: Build
+        run: yarn dist:mac
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
+
+      # One release created in one step. Letting electron-builder publish raced its parallel arch uploads into two releases.
+      - name: Publish the release
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            dist/PhaseType-arm64.dmg dist/PhaseType-x64.dmg \
+            dist/PhaseType-arm64.zip dist/PhaseType-x64.zip \
+            --title "PhaseType ${GITHUB_REF_NAME#v}" \
+            --generate-notes \
+            --verify-tag
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CSC_IDENTITY_AUTO_DISCOVERY: 'false'

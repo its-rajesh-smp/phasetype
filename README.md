@@ -10,18 +10,18 @@ Select text in any Mac app, press a hotkey, and fix or rewrite it with AI.<br />
 Then paste the result straight back over your selection.
 
 [![Download for macOS](https://img.shields.io/badge/Download-macOS-0a0a0a?style=for-the-badge&logo=apple&logoColor=white)](https://github.com/its-rajesh-smp/phasetype/releases/latest)
-[![Try it in your browser](https://img.shields.io/badge/Try_it-in_your_browser-c6f36b?style=for-the-badge)](https://phasetype.online/try)
+[![Try it in your browser](https://img.shields.io/badge/Try_it-in_your_browser-c6f36b?style=for-the-badge)](https://phasetype.vercel.app/try)
 
 [![Latest release](https://img.shields.io/github/v/release/its-rajesh-smp/phasetype?label=release&color=0a0a0a)](https://github.com/its-rajesh-smp/phasetype/releases)
 [![Downloads](https://img.shields.io/github/downloads/its-rajesh-smp/phasetype/total?color=0a0a0a)](https://github.com/its-rajesh-smp/phasetype/releases)
 ![macOS](https://img.shields.io/badge/macOS-Apple_Silicon_%7C_Intel-0a0a0a?logo=apple)
 [![Stars](https://img.shields.io/github/stars/its-rajesh-smp/phasetype?style=flat&color=0a0a0a)](https://github.com/its-rajesh-smp/phasetype/stargazers)
 
-[Website](https://phasetype.online) · [Download](https://phasetype.online/download) · [Releases](https://github.com/its-rajesh-smp/phasetype/releases) · [Report a bug](https://github.com/its-rajesh-smp/phasetype/issues)
+[Website](https://phasetype.vercel.app) · [Download](https://phasetype.vercel.app/download) · [Releases](https://github.com/its-rajesh-smp/phasetype/releases) · [Report a bug](https://github.com/its-rajesh-smp/phasetype/issues)
 
 <br />
 
-<a href="https://phasetype.online">
+<a href="https://phasetype.vercel.app">
   <img src=".github/assets/hero.png" alt="PhaseType rewriting a selected email draft in Mail, with the PhaseType panel open beside it" width="100%" />
 </a>
 
@@ -58,10 +58,10 @@ Requires macOS on Apple Silicon (M1 and later) or Intel.
 ### Option 1: Terminal (easiest)
 
 ```bash
-curl -fsSL https://phasetype.online/install.sh | sh
+curl -fsSL https://phasetype.vercel.app/install.sh | sh
 ```
 
-This downloads the latest release for your Mac's chip, puts it in Applications and opens it, with no security prompts. Run it again any time to update. You can [read the script](https://phasetype.online/install.sh) first.
+This downloads the latest release for your Mac's chip, puts it in Applications and opens it, with no security prompts. Run it again any time to update. You can [read the script](https://phasetype.vercel.app/install.sh) first.
 
 ### Option 2: Download the .dmg
 
@@ -113,7 +113,7 @@ This repo has two projects:
 | Folder | What it is | Stack |
 | --- | --- | --- |
 | [`app/`](app) | The macOS app | Electron, React 19, TypeScript, Tailwind CSS v4, electron-vite |
-| [`www/`](www) | [phasetype.online](https://phasetype.online), the website and browser playground | Next.js 16, React 19, Tailwind CSS v4 |
+| [`www/`](www) | [phasetype.vercel.app](https://phasetype.vercel.app), the website and browser playground | Next.js 16, React 19, Tailwind CSS v4 |
 
 ```bash
 # The app

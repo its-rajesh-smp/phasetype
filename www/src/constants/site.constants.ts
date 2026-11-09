@@ -1,7 +1,7 @@
 export const SITE = {
   name: 'PhaseType',
-  domain: 'phasetype.online',
-  url: 'https://phasetype.online',
+  domain: 'phasetype.vercel.app',
+  url: 'https://phasetype.vercel.app',
   title: 'PhaseType: fix and rewrite any text on your Mac with one hotkey',
   tagline: 'Better words, right where you type.',
   description:
