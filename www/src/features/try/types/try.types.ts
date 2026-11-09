@@ -48,6 +48,8 @@ export interface SampleText {
   /** Shown in the mock window's title bar. */
   app: string
   text: string
+  /** The style preset selected when this sample loads, or null for none. */
+  presetId: string | null
 }
 
 export type TryErrorKind = 'limit' | 'invalid' | 'unavailable'

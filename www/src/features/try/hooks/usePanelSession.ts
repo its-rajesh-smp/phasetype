@@ -17,11 +17,11 @@ const toSessionError = (caught: unknown): SessionError =>
  * One panel session: the text it works on (fixed at the first prompt), the prompts and streamed answers, the chosen
  * preset, and errors. Follow-up prompts refine the last answer, like the app's conversation.
  */
-export function usePanelSession() {
+export function usePanelSession(initialPresetId: string | null = null) {
   const [capture, setCapture] = useState<PanelCapture | null>(null)
   const [turns, setTurns] = useState<PlaygroundTurn[]>([])
   const [prompt, setPrompt] = useState('')
-  const [presetId, setPresetId] = useState<string | null>(null)
+  const [presetId, setPresetId] = useState<string | null>(initialPresetId)
   const [error, setError] = useState<SessionError | null>(null)
   const [remaining, setRemaining] = useState<number | null>(null)
   const controllerRef = useRef<AbortController | null>(null)

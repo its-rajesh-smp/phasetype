@@ -1,7 +1,7 @@
-import { Download, HardDriveDownload, Terminal } from 'lucide-react'
-import { ButtonLink } from '@/components/ui/ButtonLink'
-import { DOWNLOAD_OPTIONS, INSTALL_COMMAND, INSTALL_SCRIPT_URL } from '@/constants/download.constants'
+import { HardDriveDownload, Terminal } from 'lucide-react'
+import { INSTALL_COMMAND, INSTALL_SCRIPT_URL } from '@/constants/download.constants'
 import { CopyCommand } from '../CopyCommand'
+import { DmgDownload } from '../DmgDownload'
 import { InstallCard } from '../ui/InstallCard'
 
 const linkClass = 'font-medium text-ink underline decoration-line-strong underline-offset-4 hover:decoration-ink'
@@ -41,20 +41,7 @@ export function InstallOptions() {
           </>
         }
       >
-        <div className="flex flex-wrap gap-3">
-          {DOWNLOAD_OPTIONS.map((option, index) => (
-            <ButtonLink
-              key={option.arch}
-              href={option.href}
-              variant={index === 0 ? 'primary' : 'secondary'}
-              aria-label={`Download for ${option.label} Macs, ${option.detail}`}
-              leadingIcon={<Download aria-hidden className="size-4 transition-transform group-hover:translate-y-0.5" />}
-            >
-              {option.label}
-            </ButtonLink>
-          ))}
-        </div>
-        <p className="text-[13px] text-muted">Not sure? Apple menu → About This Mac. “Apple M…” means Apple Silicon.</p>
+        <DmgDownload />
       </InstallCard>
     </div>
   )

@@ -1,4 +1,5 @@
 import { useCallback, useMemo, useRef } from 'react'
+import { SAMPLE_TEXTS } from '../constants/try.constants'
 import type { PanelCapture } from '../types/try.types'
 import { useCopyFeedback } from '@/hooks/useCopyFeedback'
 import { useEditor } from './useEditor'
@@ -11,11 +12,11 @@ import { usePanelSession } from './usePanelSession'
  */
 export function usePlayground() {
   const editor = useEditor()
-  const session = usePanelSession()
+  const session = usePanelSession(SAMPLE_TEXTS[0].presetId)
   const { copied, copy } = useCopyFeedback()
   const promptRef = useRef<HTMLInputElement>(null)
   const { text, selection, replaceRange, focus, loadSample: loadEditorSample } = editor
-  const { capture, latest, reset, run } = session
+  const { capture, latest, reset, run, setPresetId } = session
 
   /** What a prompt would work on right now: the selection, or the whole draft when nothing is selected. */
   const liveSource = useMemo((): PanelCapture => {
@@ -44,8 +45,9 @@ export function usePlayground() {
     (id: string) => {
       reset()
       loadEditorSample(id)
+      setPresetId(SAMPLE_TEXTS.find((item) => item.id === id)?.presetId ?? null)
     },
-    [loadEditorSample, reset]
+    [loadEditorSample, reset, setPresetId]
   )
 
   usePanelHotkeys({

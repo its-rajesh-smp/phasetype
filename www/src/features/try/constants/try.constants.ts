@@ -7,6 +7,7 @@ export const SAMPLE_TEXTS: SampleText[] = [
     id: 'email',
     label: 'Email',
     app: 'Mail — New Message',
+    presetId: 'email-reply',
     text: `hey priya,
 
 so sorry for the late reply, things been crazy this week. i looked at the proposal and i think its mostly good but the timeline feels to tight for us, can we push the launch by maybe two weeks? let me know what you think and if its ok with your team.
@@ -18,12 +19,14 @@ sam`,
     id: 'slack',
     label: 'Slack message',
     app: 'Slack — #design',
+    presetId: 'slack-reply',
     text: `guys the new onboarding flow is live on staging, can someone have a look before tommorow? i think theres a bug on the last step where the button doesnt do anything on safari but not sure if its just me`,
   },
   {
     id: 'notes',
     label: 'Notes',
     app: 'Notes — Meeting',
+    presetId: null,
     text: `meeting w/ marketing
 - q3 budget approved, but only 80% of what we asked
 - need to cut one campaign, probably the podcast one
