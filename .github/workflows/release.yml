@@ -36,9 +36,10 @@ jobs:
 
       - run: yarn install --frozen-lockfile
 
-      # Builds both architectures into dist/. The app is ad-hoc signed (identity "-").
+      # Builds both architectures into dist/. The app is ad-hoc signed (identity "-"). electron-builder publishes on its
+      # own when it sees a tag on CI, so turn that off: the next step creates the release.
       - name: Build
-        run: yarn dist:mac
+        run: yarn dist:mac --publish never
         env:
           CSC_IDENTITY_AUTO_DISCOVERY: 'false'
 
