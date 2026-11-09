@@ -1,0 +1,44 @@
+# Builds the Mac app and publishes a GitHub release whenever a version tag is pushed:
+#   1. Set "version" in app/package.json (e.g. 0.2.0) and push the commit.
+#   2. git tag v0.2.0 && git push origin v0.2.0
+# The tag must match the version in app/package.json. The website, README and install.sh download from the latest release.
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: write
+
+jobs:
+  mac:
+    runs-on: macos-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check the tag matches app/package.json
+        run: |
+          VERSION=$(node -p "require('./package.json').version")
+          if [ "v$VERSION" != "$GITHUB_REF_NAME" ]; then
+            echo "::error::Tag $GITHUB_REF_NAME does not match app/package.json version $VERSION"
+            exit 1
+          fi
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: yarn
+          cache-dependency-path: app/yarn.lock
+
+      - run: yarn install --frozen-lockfile
+
+      # Builds both architectures and uploads the .dmg and .zip files. The app is ad-hoc signed (identity "-").
+      - name: Build and publish
+        run: yarn release:mac -c.publish.releaseType=release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          CSC_IDENTITY_AUTO_DISCOVERY: 'false'
