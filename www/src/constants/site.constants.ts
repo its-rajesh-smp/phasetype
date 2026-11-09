@@ -25,7 +25,7 @@ export const SITE = {
   authorShortName: 'Rajesh',
   authorUrl: 'https://itsrajeshsmp.online/?utm_source=phasetype',
   githubUrl: 'https://github.com/its-rajesh-smp',
-  version: '0.1.0',
+  version: '0.1.1',
   locale: 'en_US',
   category: 'productivity',
   themeColor: '#0a0a0a',

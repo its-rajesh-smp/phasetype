@@ -1,7 +1,7 @@
 {
   "name": "phasetype",
   "productName": "PhaseType",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "Select text anywhere on your Mac, hit a hotkey, and rewrite it with AI.",
   "main": "./out/main/index.js",
   "author": "Rajesh Mahapatra",
