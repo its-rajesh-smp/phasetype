@@ -12,7 +12,7 @@ export function useActiveSection(ids: readonly string[]): string | null {
       (entries) => {
         const visible = entries.find((entry) => entry.isIntersecting)
         if (visible) setActiveId(visible.target.id)
-        else if (window.scrollY < sections[0].offsetTop) setActiveId(null)
+        else if (sections[0].getBoundingClientRect().top > 0) setActiveId(null)
       },
       { rootMargin: '-45% 0px -50% 0px' }
     )

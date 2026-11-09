@@ -143,6 +143,13 @@
     scroll-padding-top: 6rem;
   }
 
+  /* On desktop the site reads best at the density of 80% browser zoom. Phones and tablets stay at 100%. */
+  @media (min-width: 1024px) {
+    html {
+      zoom: 0.8;
+    }
+  }
+
   body {
     @apply bg-canvas font-sans text-ink antialiased;
     font-feature-settings: 'cv11', 'ss01';
