@@ -19,6 +19,12 @@ Then paste the result straight back over your selection.
 
 [Website](https://phasetype.online) · [Download](https://phasetype.online/download) · [Releases](https://github.com/its-rajesh-smp/phasetype/releases) · [Report a bug](https://github.com/its-rajesh-smp/phasetype/issues)
 
+<br />
+
+<a href="https://phasetype.online">
+  <img src=".github/assets/hero.png" alt="PhaseType rewriting a selected email draft in Mail, with the PhaseType panel open beside it" width="100%" />
+</a>
+
 </div>
 
 ---
