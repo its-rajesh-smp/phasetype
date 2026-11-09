@@ -30,7 +30,7 @@ mac:
   entitlements: build/entitlements.mac.plist
   entitlementsInherit: build/entitlements.mac.plist
   notarize: false
-zip:
+  # Used by the zip (the dmg sets its own below). install.sh downloads PhaseType-<arch>.zip.
   artifactName: ${productName}-${arch}.${ext}
 dmg:
   artifactName: ${productName}-${arch}.${ext}

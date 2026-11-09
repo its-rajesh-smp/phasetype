@@ -44,10 +44,12 @@ The quick fix hotkey runs **Fix the sentence** without opening the panel: it rea
 yarn dist:mac
 ```
 
-This type-checks, builds, and writes two installers to `dist/` (about a minute):
+This type-checks, builds, and writes the installers to `dist/` (a few minutes):
 
-- `PhaseType-<version>-arm64.dmg` for Apple Silicon Macs (M1 and later)
-- `PhaseType-<version>-x64.dmg` for Intel Macs
+- `PhaseType-arm64.dmg` and `PhaseType-arm64.zip` for Apple Silicon Macs (M1 and later)
+- `PhaseType-x64.dmg` and `PhaseType-x64.zip` for Intel Macs
+
+The file names have no version, so `releases/latest/download/<name>` always points at the newest release. The website links to the `.dmg` files and `install.sh` downloads the `.zip`.
 
 Open the `.dmg` and drag PhaseType into Applications.
 
